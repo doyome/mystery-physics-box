@@ -2,475 +2,1393 @@
 <html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0624">
 <title>Mystery Physics Box</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Orbitron:wght@600;800;900&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg1:#0b1430; --bg2:#1b2a5c; --card:#16224a; --card2:#1f2f63; --line:#2e4385;
-  --ink:#f3f6ff; --mute:#9fb0e0; --gold:#ffc94a; --ok:#2fd27a; --bad:#ff5a6a; --ai:#7cf3ff;
-  --t1:#ff7a59; --t2:#4aa8ff; --t3:#b679ff; --t4:#3fd9a0;
+  --bg0:#070418; --ink:#f3f0ff; --mute:#a9a2d6; --cy:#34e7ff; --pk:#ff4fd8; --gd:#ffcc4d; --ok:#3cf2a5; --bad:#ff5577; --vi:#8b5cf6;
+  --edge:rgba(255,255,255,.14); --glass:rgba(255,255,255,.06);
+  --fd:"Orbitron","Outfit","Cairo","Segoe UI",Tahoma,system-ui,sans-serif;
+  --fb:"Outfit","Cairo","Segoe UI",Tahoma,system-ui,sans-serif;
+  --fa:"Cairo","Segoe UI",Tahoma,"Arial",system-ui,sans-serif;
 }
-*{box-sizing:border-box}
-html,body{margin:0;height:100%}
-body{
-  font-family:"Baloo Bhaijaan 2",system-ui,sans-serif; color:var(--ink);
-  background:radial-gradient(1200px 700px at 80% -10%,#2b3f8a 0,transparent 60%),
-             radial-gradient(900px 600px at -10% 110%,#3a1f6b 0,transparent 55%),
-             linear-gradient(160deg,var(--bg1),var(--bg2));
-  min-height:100vh; overflow-x:hidden;
-}
-button{font-family:inherit;cursor:pointer;border:0;color:inherit}
-.screen{display:none;min-height:100vh;padding:20px 16px 28px}
-.screen.on{display:block}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg0)}
+body{font-family:var(--fb);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased;line-height:1.35;
+  background:radial-gradient(1000px 640px at 88% -12%,rgba(122,52,255,.32),transparent 60%),
+             radial-gradient(900px 700px at -12% 112%,rgba(255,79,216,.20),transparent 60%),
+             radial-gradient(800px 520px at 50% 45%,rgba(40,24,120,.45),transparent 70%),
+             linear-gradient(180deg,#0d0729,#070418);background-attachment:fixed}
+html[lang=ar] body{font-family:var(--fa)}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-action:manipulation}
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+#fx{position:fixed;inset:0;z-index:90;pointer-events:none}
+kbd{font:700 11px var(--fb);padding:2px 7px;border-radius:7px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;white-space:nowrap}
+@media (hover:none){kbd,.keys{display:none!important}}
+
+/* bilingual */
+.l-en,.l-ar{display:block}
+.l-ar{font-family:var(--fa);font-size:.88em;opacity:.93;margin-top:.1em;line-height:1.5}
+.ar-i{font-family:var(--fa)}
+.sep{opacity:.45;margin:0 .35em}
+.eq{font-family:Consolas,"Cascadia Mono","Courier New",monospace;color:var(--gd);background:rgba(255,204,77,.1);padding:0 .35em;border-radius:6px;font-weight:700}
+
+/* ---------- toolbar ---------- */
+.tools{position:fixed;top:12px;inset-inline-end:14px;z-index:40;display:flex;gap:8px;align-items:center;transition:opacity .3s,transform .3s}
+body.modal-open .tools{opacity:0;pointer-events:none;transform:translateY(-12px)}
+.seg{display:flex;padding:4px;border-radius:999px;background:rgba(12,7,36,.72);border:1px solid var(--edge);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.seg button{min-height:44px;min-width:44px;padding:6px 12px;border-radius:999px;font-weight:700;font-size:14px;color:var(--mute);transition:.25s}
+.seg button.sel{background:linear-gradient(135deg,var(--pk),var(--vi));color:#fff;box-shadow:0 4px 16px rgba(255,79,216,.4)}
+.ib{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:rgba(12,7,36,.72);border:1px solid var(--edge);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:.2s}
+.ib svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media (hover:hover){.ib:hover{border-color:var(--cy);box-shadow:0 0 16px rgba(52,231,255,.4)}.seg button:not(.sel):hover{color:#fff}}
+
+/* ---------- screens ---------- */
+.screen{position:relative;z-index:1;display:none;min-height:100vh;padding:16px 20px 30px}
+.screen.on{display:block;animation:scrIn .6s cubic-bezier(.2,.8,.2,1) both}
+@keyframes scrIn{from{opacity:0;transform:translateY(18px) scale(.985);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
 .wrap{max-width:1180px;margin:0 auto}
+.wide{max-width:1320px}
+.hdr{display:flex;align-items:center;gap:12px;min-height:52px;padding-inline-end:290px;margin-bottom:12px}
+.brand{display:flex;align-items:center;gap:12px;cursor:pointer}
+.blogo{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font:900 24px var(--fd);color:#fff;
+  background:linear-gradient(135deg,var(--pk),var(--vi) 55%,var(--cy));box-shadow:0 6px 20px rgba(255,79,216,.45),inset 0 0 0 1px rgba(255,255,255,.35);animation:blogo 4s ease-in-out infinite}
+@keyframes blogo{50%{transform:rotate(-6deg) scale(1.05)}}
+.bname{font:800 clamp(16px,2vw,22px) var(--fd);letter-spacing:.04em;line-height:1.1}
+.bname .l-ar{font-family:var(--fa);letter-spacing:0;font-size:.8em}
+.panel{background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--edge);border-radius:24px;padding:18px 20px;
+  box-shadow:0 20px 50px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.panel h3{margin:0 0 12px;font-size:19px;display:flex;align-items:center;gap:10px}
+.panel h3 .l-ar{display:inline;margin:0}
+.lbl{color:var(--mute);font-weight:700;font-size:13.5px;letter-spacing:.06em;text-transform:uppercase;margin:12px 0 8px}
+html[lang=ar] .lbl{letter-spacing:0}
+.lbl .l-ar{text-transform:none;letter-spacing:0}
 
-/* ---------- header ---------- */
-.top{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{width:54px;height:54px;border-radius:14px;display:grid;place-items:center;font-size:30px;
-  background:linear-gradient(145deg,#ffd76a,#ff9f3a);box-shadow:0 6px 0 #b8691a,0 10px 24px #0007}
-.brand h1{margin:0;font-size:clamp(22px,3.4vw,36px);line-height:1}
-.brand small{color:var(--mute);font-size:15px}
-.pill{background:#ffffff14;border:1px solid #ffffff22;border-radius:999px;padding:6px 14px;font-weight:700}
-.lang{padding:8px 16px;border-radius:999px;background:#ffffff18;border:1px solid #ffffff30;font-weight:700}
+/* buttons */
+.cta{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:56px;padding:14px 34px;border-radius:999px;font:800 20px var(--fb);color:#fff;
+  background:linear-gradient(135deg,#ff4fd8,#8b5cf6 50%,#34e7ff);background-size:200% 200%;box-shadow:0 12px 34px rgba(255,79,216,.38),inset 0 0 0 1px rgba(255,255,255,.35);
+  animation:grad 6s ease infinite;transition:transform .2s,box-shadow .2s;overflow:hidden;text-align:center}
+.cta .l-ar{font-size:.8em}
+.cta:after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg);animation:sheen 3.8s ease-in-out infinite}
+@media (hover:hover){.cta:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 16px 44px rgba(255,79,216,.55)}}
+.cta:active{transform:scale(.97)}
+@keyframes grad{50%{background-position:100% 50%}}
+@keyframes sheen{0%,55%{left:-60%}100%{left:130%}}
+.ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:10px 18px;border-radius:14px;font-weight:700;font-size:15px;background:rgba(255,255,255,.07);border:1px solid var(--edge);transition:.2s}
+.ghost.armed{background:rgba(255,85,119,.25);border-color:var(--bad)}
+@media (hover:hover){.ghost:hover{background:rgba(255,255,255,.13)}}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:10px 18px;border-radius:14px;font-weight:700;font-size:16px;background:rgba(255,255,255,.09);border:1.5px solid rgba(255,255,255,.22);transition:transform .15s,background .2s,box-shadow .2s;text-align:start}
+.btn i{font-style:normal;font-size:20px}
+.btn .l-ar{font-size:.85em}
+.btn.ok{background:linear-gradient(135deg,#25d891,#0fa56b);border-color:#7dffc8;color:#032417;box-shadow:0 5px 0 #076b44}
+.btn.no{background:rgba(255,85,119,.16);border-color:var(--bad)}
+.btn:active{transform:translateY(3px)}
+@media (hover:hover){.btn:hover{transform:translateY(-2px)}}
 
-/* ---------- setup ---------- */
-.setup{display:grid;gap:18px;grid-template-columns:1.2fr 1fr;margin-top:10px}
-@media(max-width:860px){.setup{grid-template-columns:1fr}}
-.panel{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:22px;padding:20px}
-.panel h2{margin:0 0 12px;font-size:22px}
-.rules li{margin:6px 0;color:#dfe6ff;font-size:17px}
-.rules b{color:var(--gold)}
-.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
-.opt{padding:10px 16px;border-radius:14px;background:#ffffff10;border:2px solid #ffffff20;font-weight:700;font-size:17px}
-.opt.sel{background:var(--gold);color:#3a2600;border-color:var(--gold)}
-.label{color:var(--mute);font-weight:700;font-size:15px}
-.teams{display:grid;gap:8px;margin:8px 0 16px}
-.teams input{width:100%;padding:10px 14px;border-radius:12px;border:2px solid #ffffff22;background:#0b1430;color:var(--ink);font:inherit;font-size:18px}
-.go{width:100%;padding:16px;border-radius:18px;font-size:24px;font-weight:800;color:#3a2600;
-  background:linear-gradient(180deg,#ffd96b,#ffb52e);box-shadow:0 6px 0 #b8741a}
-.go:active{transform:translateY(4px);box-shadow:0 2px 0 #b8741a}
+/* ---------- TITLE ---------- */
+#sTitle{display:none;place-items:center;text-align:center;overflow:hidden}
+#sTitle.on{display:grid}
+.title-wrap{position:relative;z-index:2;max-width:900px;padding:34px 6px 16px}
+.floaters{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.floaters span{position:absolute;bottom:-80px;opacity:.16;animation:floatUp linear infinite;filter:drop-shadow(0 0 10px rgba(255,255,255,.4))}
+@keyframes floatUp{to{transform:translateY(-120vh) rotate(40deg)}}
+.logo3d{position:relative;width:210px;height:210px;margin:-18px auto -22px;perspective:800px;transform:scale(.8)}
+.cube{position:absolute;left:50%;top:50%;width:104px;height:104px;margin:-52px;transform-style:preserve-3d;animation:spin 14s linear infinite}
+.cube b{position:absolute;inset:0;display:grid;place-items:center;font:900 54px var(--fd);color:#fff;border-radius:16px;
+  background:linear-gradient(135deg,rgba(255,79,216,.28),rgba(52,231,255,.18));border:2px solid rgba(255,255,255,.75);
+  box-shadow:inset 0 0 26px rgba(255,79,216,.7),0 0 20px rgba(52,231,255,.55);text-shadow:0 0 16px var(--pk)}
+.cube .f1{transform:translateZ(52px)}.cube .f2{transform:rotateY(180deg) translateZ(52px)}.cube .f3{transform:rotateY(90deg) translateZ(52px)}
+.cube .f4{transform:rotateY(-90deg) translateZ(52px)}.cube .f5{transform:rotateX(90deg) translateZ(52px)}.cube .f6{transform:rotateX(-90deg) translateZ(52px)}
+@keyframes spin{from{transform:rotateX(-22deg) rotateY(0)}to{transform:rotateX(-22deg) rotateY(360deg)}}
+.orbit{position:absolute;inset:6px;border:1.5px solid rgba(52,231,255,.4);border-radius:50%;--b:rotateX(74deg);transform:var(--b);animation:orb 5s linear infinite}
+.orbit i{position:absolute;top:-6px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--cy);box-shadow:0 0 16px var(--cy)}
+.orbit.o2{--b:rotateY(62deg) rotateX(74deg);border-color:rgba(255,79,216,.4);animation-duration:8s}
+.orbit.o2 i{background:var(--pk);box-shadow:0 0 16px var(--pk)}
+@keyframes orb{from{transform:var(--b) rotateZ(0)}to{transform:var(--b) rotateZ(360deg)}}
+.cube-glow{position:absolute;inset:34px;border-radius:50%;background:radial-gradient(circle,rgba(255,79,216,.55),transparent 66%);filter:blur(18px);animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.15);opacity:.7}}
+.mega{font:900 clamp(30px,5.6vw,70px) var(--fd);letter-spacing:.03em;margin:4px 0 8px;line-height:1.04;text-transform:uppercase;
+  background:linear-gradient(90deg,#fff 0%,var(--cy) 25%,var(--pk) 50%,var(--gd) 75%,#fff 100%);background-size:300% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 9s linear infinite;filter:drop-shadow(0 0 26px rgba(255,79,216,.35))}
+.mega .l-ar{font-family:var(--fa);font-weight:800;letter-spacing:0;font-size:.62em;margin-top:.15em}
+html[lang=ar] .mega{font-family:var(--fa);letter-spacing:0;line-height:1.3}
+@keyframes shimmer{to{background-position:300% 0}}
+.tagline{font-size:clamp(16px,2vw,21px);color:#d8d2ff;margin:0 0 18px;letter-spacing:.04em}
+.tagline .l-ar{letter-spacing:0}
+.credit{position:relative;margin:20px auto 0;max-width:780px;padding:14px 22px 14px;border-radius:20px;text-align:center;
+  background:linear-gradient(135deg,rgba(255,255,255,.09),rgba(255,255,255,.03));border:1px solid var(--edge);color:#e2ddff;font-size:15.5px;line-height:1.6;
+  box-shadow:0 14px 40px rgba(0,0,0,.3)}
+.credit .ribbon{display:inline-block;margin-bottom:6px;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#1a0b33;background:linear-gradient(90deg,var(--gd),#ffe69a)}
+html[lang=ar] .credit .ribbon{letter-spacing:0}
+.credit .ribbon .l-en,.credit .ribbon .l-ar{display:inline}
+.credit .ribbon .l-ar{margin-inline-start:.5em;font-size:1em}
+.credit b{color:var(--gd)}
+.credit .cl{display:block}
+.credit .cl+.cl{margin-top:2px}
+.credit .dash{opacity:.5;margin:0 .35em}
+.title-keys{margin-top:14px;color:var(--mute);font-size:13px}
 
-/* ---------- scoreboard ---------- */
-.scores{display:flex;gap:10px;flex-wrap:wrap}
-.sc{display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:16px;background:#ffffff10;border:2px solid transparent;transition:.3s}
-.sc .dot{width:14px;height:14px;border-radius:50%}
-.sc .n{font-weight:700;font-size:17px}
-.sc .p{font-weight:800;font-size:24px;min-width:28px;text-align:center}
-.sc.turn{border-color:var(--gold);background:#ffc94a22;transform:scale(1.05)}
-.turnlbl{font-size:20px;font-weight:700;margin:6px 0 14px;text-align:center}
-.turnlbl span{color:var(--gold)}
+/* ---------- SETUP ---------- */
+.h2{font:800 clamp(24px,3vw,34px) var(--fd);margin:4px 0 14px;letter-spacing:.02em}
+.h2 .l-ar{font-family:var(--fa);letter-spacing:0;font-size:.72em}
+html[lang=ar] .h2{font-family:var(--fa)}
+.rulecards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.rc{position:relative;padding:14px 14px 14px;border-radius:20px;background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.025));border:1px solid var(--edge);font-size:14.5px;line-height:1.45;animation:rise .6s both}
+.rc .ri{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:22px;margin-bottom:8px;background:linear-gradient(135deg,rgba(255,79,216,.35),rgba(139,92,246,.35));box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}
+.rc b{color:var(--gd)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.setup{display:grid;gap:16px;grid-template-columns:1.1fr 1fr}
+@media(max-width:900px){.setup{grid-template-columns:1fr}}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.opt{min-width:48px;min-height:46px;padding:8px 14px;border-radius:14px;font-weight:800;font-size:16px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.16);transition:.2s}
+.opt.sel{background:linear-gradient(135deg,var(--gd),#ffa94d);color:#2a1600;border-color:transparent;box-shadow:0 6px 18px rgba(255,204,77,.35)}
+.opt:disabled{opacity:.3;cursor:not-allowed}
+.modeseg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.modeseg button{display:flex;align-items:center;gap:10px;min-height:58px;padding:10px 14px;border-radius:16px;font-weight:800;font-size:17px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.14);text-align:start;transition:.25s}
+.modeseg button i{font-style:normal;font-size:26px}
+.modeseg button.sel{background:linear-gradient(135deg,rgba(255,79,216,.35),rgba(139,92,246,.35));border-color:var(--pk);box-shadow:0 0 22px rgba(255,79,216,.3)}
+.names{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:560px){.names{grid-template-columns:1fr}}
+.nrow{display:flex;align-items:center;gap:8px}
+.nav{flex:0 0 42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:rgba(255,255,255,.07);border:1.5px solid var(--c)}
+.names input,.tcard input{flex:1;min-width:0;width:100%;min-height:44px;padding:9px 12px;border-radius:12px;border:1.5px solid rgba(255,255,255,.14);background:rgba(8,4,26,.6);color:var(--ink);font:inherit;font-size:16px;outline:none;transition:.2s}
+.names input:focus,.tcard input:focus{border-color:var(--c,var(--cy));box-shadow:0 0 0 3px rgba(52,231,255,.18)}
+input::placeholder{color:#8e87b8}
+.tcards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.tcards{grid-template-columns:1fr}}
+.tcard{padding:10px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-top:3px solid var(--c)}
+.tcard .tn{font-weight:700}
+.mems{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px}
+.mems input{min-height:44px;font-size:14px;padding:8px}
+.topics{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:8px}
+.topic{position:relative;display:flex;align-items:center;gap:8px;min-height:54px;padding:8px 12px;border-radius:16px;font-weight:700;font-size:14.5px;text-align:start;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.14);transition:.2s}
+.topic i{font-style:normal;font-size:22px}
+.topic span{flex:1;line-height:1.25}
+.topic span .l-ar{font-size:.86em}
+.topic em{font-style:normal;font-size:12px;font-weight:800;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.12)}
+.topic.sel{border-color:var(--cy);background:linear-gradient(135deg,rgba(52,231,255,.22),rgba(139,92,246,.2));box-shadow:0 0 20px rgba(52,231,255,.25)}
+.topic.star:not(.sel){border-style:dashed;border-color:rgba(255,204,77,.6)}
+.switch{display:inline-flex;align-items:center;gap:12px;min-height:48px;padding:6px 14px 6px 6px;border-radius:999px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.14);font-weight:800}
+.switch i{position:relative;width:54px;height:32px;border-radius:999px;background:rgba(255,255,255,.18);transition:.3s}
+.switch i:after{content:"";position:absolute;top:4px;inset-inline-start:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.3s}
+.switch.on i{background:linear-gradient(90deg,var(--ok),var(--cy))}
+.switch.on i:after{inset-inline-start:26px}
+.hint{color:var(--mute);font-size:13.5px;margin-top:6px}
+.startbar{display:flex;flex-direction:column;align-items:center;gap:10px;margin:22px 0 6px}
+.startbar .cta{min-width:min(420px,100%)}
+.keys{color:var(--mute);font-size:13px;text-align:center}
 
-/* ---------- board ---------- */
-.board{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
-.box{position:relative;aspect-ratio:1/1;border-radius:20px;perspective:600px}
-.box .lid{position:absolute;inset:0;border-radius:20px;display:grid;place-items:center;
-  background:linear-gradient(160deg,#c98b4a,#8b5527);box-shadow:inset 0 0 0 6px #6d3f19,0 8px 0 #4a2a10,0 14px 26px #0008;
-  font-size:52px;font-weight:800;color:#ffe9c6;text-shadow:0 3px 0 #5a3312;transition:transform .25s}
-.box .lid:before{content:"";position:absolute;left:0;right:0;top:44%;height:14%;background:#6d3f19aa}
-.box .lid i{font-style:normal;position:relative}
-.box .lid em{position:absolute;bottom:10px;font-style:normal;font-size:22px;opacity:.9}
-.box:not(.done):hover .lid{transform:translateY(-6px) rotate(-2deg)}
-.box.done .lid{background:linear-gradient(160deg,#2a3b74,#1a2552);box-shadow:inset 0 0 0 4px #3c55a8,0 6px 0 #0d1530;color:#fff;font-size:56px;text-shadow:none}
-.box.done .lid:before{display:none}
-.box.done .lid em{font-size:14px;bottom:8px;color:var(--mute)}
-.box .who{position:absolute;top:8px;inset-inline-end:8px;width:16px;height:16px;border-radius:50%;z-index:2}
+/* ---------- BOARD ---------- */
+.turnbar{--c:#34e7ff;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 18px;border-radius:24px;margin:0 0 16px;
+  background:linear-gradient(90deg,var(--cg,rgba(52,231,255,.2)),rgba(255,255,255,.03) 70%);border:1px solid var(--edge);animation:rise .5s both}
+.tav{flex:0 0 auto;width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:30px;background:rgba(255,255,255,.08);border:2px solid var(--c);box-shadow:0 0 22px var(--cg);animation:avPulse 2.4s ease-in-out infinite}
+.tav.sm{width:46px;height:46px;font-size:24px;border-radius:14px}
+@keyframes avPulse{50%{box-shadow:0 0 34px var(--c)}}
+.tinfo{min-width:0}
+.tsmall{color:var(--mute);font-size:12.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+html[lang=ar] .tsmall{letter-spacing:0}
+.tname{font-weight:800;font-size:clamp(19px,2.2vw,26px);line-height:1.15}
+.tname.sm{font-size:18px}
+.tname .l-ar{font-size:.8em}
+.members{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+.members span{padding:2px 10px;border-radius:999px;background:rgba(255,255,255,.1);font-size:13px;font-weight:600}
+.fire{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;font-weight:800;font-size:13px;color:#2a1000;background:linear-gradient(90deg,#ffd166,#ff8a3d);box-shadow:0 0 16px rgba(255,138,61,.6);animation:fireP 1.2s ease-in-out infinite}
+@keyframes fireP{50%{transform:scale(1.08)}}
+.thint{margin-inline-start:auto;font-weight:800;color:var(--gd);text-align:center;animation:pulseTxt 2.2s ease-in-out infinite}
+@keyframes pulseTxt{50%{opacity:.6}}
+.tleft{display:flex;flex-direction:column;align-items:center;padding:6px 14px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid var(--edge);text-align:center;font-size:12px;color:var(--mute);font-weight:700}
+.tleft b{font:900 28px var(--fb);color:#fff}
+.bgrid{display:grid;grid-template-columns:1fr 300px;gap:18px;align-items:start}
+@media(max-width:940px){.bgrid{grid-template-columns:1fr}}
+.board{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(146px,1fr))}
+@media(max-width:560px){.board{grid-template-columns:repeat(3,1fr);gap:10px}}
+@media(max-width:380px){.board{grid-template-columns:repeat(2,1fr)}}
+.mbox{--tc:#34e7ff;position:relative;aspect-ratio:1/1.04;border-radius:22px;padding:0;min-height:96px;
+  transform:perspective(700px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--ty,0px));transition:transform .25s ease-out,filter .3s}
+.board.intro .mbox{animation:boxIn .7s cubic-bezier(.2,.9,.3,1.25) backwards;animation-delay:calc(var(--d) * 50ms)}
+@keyframes boxIn{from{opacity:0;transform:translateY(40px) scale(.7) rotate(-6deg)}}
+.mface{position:absolute;inset:0;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(165deg,#43289e 0%,#24156a 50%,#160d45 100%);
+  box-shadow:inset 0 0 0 1.5px var(--tcg),0 14px 30px rgba(0,0,0,.5),0 0 22px var(--tcs);transition:box-shadow .3s}
+.mface:before{content:"";position:absolute;left:0;right:0;top:0;height:27%;background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.04));border-bottom:2px solid var(--tcg);transition:transform .3s}
+.mface:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.22),transparent 55%);opacity:0;transition:opacity .3s;pointer-events:none}
+@media (hover:hover){
+  .mbox:not(.done):hover{--ty:-6px}
+  .mbox:not(.done):hover .mface{box-shadow:inset 0 0 0 2px var(--tc),0 22px 40px rgba(0,0,0,.55),0 0 40px var(--tcg)}
+  .mbox:not(.done):hover .mface:after{opacity:1}
+  .mbox:not(.done):hover .mface:before{transform:translateY(-4px)}
+}
+.mnum{position:absolute;top:7px;inset-inline-start:12px;font:800 13px var(--fd);color:rgba(255,255,255,.75);z-index:1}
+.mq{font:900 clamp(40px,4.6vw,60px) var(--fd);line-height:1;margin-top:8px;background:linear-gradient(180deg,#fff,var(--tc));-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 12px var(--tcg));animation:qfloat 3s ease-in-out infinite;animation-delay:calc(var(--d) * -0.3s)}
+@keyframes qfloat{50%{transform:translateY(-6px)}}
+.mface .chip{position:absolute;bottom:7px;max-width:calc(100% - 12px);font-size:10.5px;padding:3px 8px}
+.mface .chip .l-ar{font-size:.95em}
+.mbox.done{cursor:default}
+.mbox.done .mface{background:linear-gradient(165deg,#1d1648,#110b2e);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
+.mbox.done .mface:before{display:none}
+.mico{font-size:clamp(34px,4vw,48px);line-height:1;filter:drop-shadow(0 0 14px var(--tcg))}
+.mname{font-size:12.5px;color:#cfc8f5;text-align:center;padding:4px 8px 0;line-height:1.25;font-weight:600}
+.mname .l-ar{font-size:.95em}
+.mbox .who{position:absolute;top:9px;inset-inline-end:10px;width:13px;height:13px;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c);z-index:2}
+.mbox.opening{animation:boxOpen .3s ease-in forwards}
+@keyframes boxOpen{to{transform:scale(1.15);opacity:0;filter:brightness(2)}}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12.5px;font-weight:700;color:#fff;line-height:1.15;
+  background:linear-gradient(135deg,var(--cc2),rgba(255,255,255,.04));border:1px solid var(--cc3);text-align:start}
+.chip i{font-style:normal}
+.chip .l-ar{margin-top:0}
+.lbp{position:sticky;top:16px}
+.lbp h3{justify-content:space-between}
+.lb{position:relative;transition:height .4s}
+.lbr{--c:#fff;position:absolute;left:0;right:0;top:0;display:grid;grid-template-columns:28px 40px 1fr auto;align-items:center;gap:8px;padding:6px 8px;border-radius:14px;
+  transition:transform .8s cubic-bezier(.3,1.35,.5,1),background .3s,box-shadow .3s}
+.lbr.turn{background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1.5px var(--c)}
+.lbr .rk{font:900 15px var(--fd);text-align:center;color:var(--mute)}
+.lbr .av{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:19px;background:rgba(255,255,255,.07);border:1.5px solid var(--c)}
+.lbr .nmw{min-width:0}
+.lbr .nm{font-weight:700;font-size:15px;line-height:1.2}
+.lbr .nm .l-en,.lbr .nm .l-ar,.lbr .nm .one{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lbr .nm .l-ar{font-size:.85em}
+.lbr .bar{height:5px;border-radius:5px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:5px}
+.lbr .bar i{display:block;height:100%;width:0;border-radius:5px;background:linear-gradient(90deg,var(--c),#fff);transition:width .9s cubic-bezier(.3,1.2,.5,1)}
+.lbr .pt{font:900 24px var(--fb);min-width:36px;text-align:end}
+.lbr .fire{font-size:11px;padding:1px 7px;margin-inline-start:4px;vertical-align:middle}
+.bump{animation:bump .7s}
+@keyframes bump{30%{transform:scale(1.6);color:var(--gd);text-shadow:0 0 18px var(--gd)}}
+.lbfoot{margin-top:14px;display:flex;justify-content:center}
 
-/* ---------- play modal ---------- */
-.modal{position:fixed;inset:0;background:#050a1ccc;backdrop-filter:blur(4px);display:none;z-index:20;overflow:auto;padding:18px 12px}
-.modal.on{display:block}
-.play{max-width:980px;margin:0 auto;background:linear-gradient(180deg,#1d2c5f,#121b3d);border:1px solid var(--line);border-radius:26px;padding:20px;position:relative}
-.ph{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.ph h2{margin:0;font-size:28px}
-.timer{position:relative;width:74px;height:74px}
-.timer svg{transform:rotate(-90deg)}
-.timer b{position:absolute;inset:0;display:grid;place-items:center;font-size:26px}
-.stage{display:grid;grid-template-columns:240px 1fr;gap:20px;margin-top:14px}
-@media(max-width:760px){.stage{grid-template-columns:1fr}}
-.bigbox{height:220px;border-radius:24px;display:grid;place-items:center;font-size:96px;position:relative;
-  background:linear-gradient(160deg,#c98b4a,#8b5527);box-shadow:inset 0 0 0 8px #6d3f19,0 10px 0 #4a2a10}
-.bigbox.shake{animation:shake 1.2s infinite}
-.bigbox .q{font-size:110px;color:#ffe9c6;text-shadow:0 4px 0 #5a3312}
-.bigbox.open{background:radial-gradient(circle at 50% 40%,#fff6d8,#ffd27a 55%,#c98b4a);animation:pop .6s}
-@keyframes shake{0%,100%{transform:rotate(0)}10%{transform:rotate(-3deg)}20%{transform:rotate(3deg)}30%{transform:rotate(-2deg)}40%{transform:rotate(0)}}
-@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.1)}100%{transform:scale(1)}}
-.objname{text-align:center;font-size:24px;font-weight:800;margin-top:10px;min-height:34px;color:var(--gold)}
-.ai{background:#071a2a;border:2px solid #1f6f86;border-radius:18px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 0 24px #1fb6d633 inset}
-.ai .bot{font-size:34px;line-height:1;animation:bob 2s infinite}
-@keyframes bob{50%{transform:translateY(-4px)}}
-.ai .t{color:var(--ai);font-size:20px;min-height:30px}
-.ai .t small{display:block;color:#5fb7c9;font-size:14px;font-weight:700;margin-bottom:2px}
-.cur:after{content:"▍";animation:blink 1s infinite}
-@keyframes blink{50%{opacity:0}}
-.clues{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+/* ---------- PLAY MODAL ---------- */
+.modal{position:fixed;inset:0;z-index:30;display:none;overflow:auto;padding:12px 12px 26px;-webkit-overflow-scrolling:touch;
+  background:radial-gradient(circle at 50% 30%,rgba(30,16,84,.86),rgba(4,2,14,.94))}
+.modal.on{display:block;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0}}
+.play{position:relative;max-width:1120px;margin:0 auto;border-radius:28px;padding:14px 18px 18px;
+  background:linear-gradient(160deg,rgba(46,27,122,.8),rgba(14,8,40,.92));border:1px solid var(--edge);
+  box-shadow:0 30px 80px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.1),0 0 70px rgba(139,92,246,.25);animation:modalIn .55s cubic-bezier(.2,.9,.25,1.2)}
+@keyframes modalIn{from{opacity:0;transform:translateY(30px) scale(.94)}}
+.ph{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.boxno{font:900 24px var(--fd);padding:4px 14px;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid var(--edge)}
+.who2{--c:#fff;display:flex;align-items:center;gap:10px;min-width:0}
+.ph .grow{flex:1}
+.backbtn{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:20px;background:rgba(255,255,255,.07);border:1px solid var(--edge)}
+.timer{position:relative;width:70px;height:70px;flex:0 0 auto}
+.timer svg{width:100%;height:100%;transform:rotate(-90deg)}
+.timer circle{fill:none;stroke-width:7}
+.timer .trk{stroke:rgba(255,255,255,.12)}
+.timer .arc{stroke:url(#tg);stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+.timer b{position:absolute;inset:0;display:grid;place-items:center;font:900 24px var(--fb)}
+.timer.warn .arc{stroke:var(--bad)}
+.timer.warn{animation:tpulse 1s ease-in-out infinite}
+.timer.warn b{color:var(--bad)}
+.timer.crit{animation:tpulse .5s ease-in-out infinite}
+@keyframes tpulse{50%{transform:scale(1.12);filter:drop-shadow(0 0 14px var(--bad))}}
+.stage{display:grid;grid-template-columns:340px 1fr;gap:16px}
+@media(max-width:820px){.stage{grid-template-columns:1fr}}
+.specimen{--tc:#34e7ff;--tcg:rgba(52,231,255,.4);position:relative;height:290px;border-radius:24px;overflow:hidden;
+  background:radial-gradient(ellipse at 50% 92%,var(--tcg),transparent 55%),radial-gradient(circle at 50% 0%,rgba(255,255,255,.14),transparent 50%),linear-gradient(180deg,#160c44,#0a0624);
+  border:1px solid var(--edge);box-shadow:inset 0 0 60px rgba(0,0,0,.6)}
+.specimen .grid{position:absolute;left:-20%;right:-20%;bottom:-10%;height:55%;background:linear-gradient(transparent 0 95%,rgba(255,255,255,.08) 95%) 0 0/100% 22px,linear-gradient(90deg,transparent 0 95%,rgba(255,255,255,.08) 95%) 0 0/22px 100%;transform:perspective(300px) rotateX(60deg);transform-origin:bottom;-webkit-mask:linear-gradient(transparent,#000);mask:linear-gradient(transparent,#000)}
+.rays{position:absolute;left:50%;top:44%;width:620px;height:620px;margin:-310px 0 0 -310px;opacity:0;transform:scale(.2);pointer-events:none}
+.rays i{position:absolute;inset:0;border-radius:50%;background:repeating-conic-gradient(from 0deg,var(--tcg) 0deg 5deg,transparent 5deg 15deg);
+  -webkit-mask:radial-gradient(circle,#000 0,#000 12%,transparent 60%);mask:radial-gradient(circle,#000 0,#000 12%,transparent 60%);animation:raysSpin 22s linear infinite}
+.specimen.open .rays{animation:raysIn 1s cubic-bezier(.2,.9,.3,1) forwards}
+@keyframes raysIn{to{opacity:1;transform:scale(1)}}
+@keyframes raysSpin{to{transform:rotate(360deg)}}
+.flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,#fff,transparent 62%);opacity:0;pointer-events:none;z-index:6}
+.specimen.open .flash{animation:flash .9s ease-out}
+@keyframes flash{15%{opacity:.95}100%{opacity:0}}
+.pedestal{position:absolute;left:50%;bottom:30px;width:230px;height:40px;margin-left:-115px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(255,255,255,.35),var(--tcg) 40%,transparent 70%);box-shadow:0 0 50px var(--tcg)}
+.crate{position:absolute;left:50%;bottom:52px;width:176px;height:150px;margin-left:-88px}
+.specimen:not(.open) .crate{animation:idle 2.6s ease-in-out infinite}
+@keyframes idle{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.specimen.nope .crate{animation:nope .5s}
+@keyframes nope{20%{transform:translateX(-10px) rotate(-3deg)}40%{transform:translateX(10px) rotate(3deg)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+.cbody{position:absolute;left:0;right:0;bottom:0;height:114px;border-radius:12px 12px 18px 18px;z-index:2;display:grid;place-items:center;
+  background:linear-gradient(180deg,#5534c4,#2a1670);box-shadow:inset 0 0 0 2px var(--tc),0 0 30px var(--tcg),0 18px 26px rgba(0,0,0,.55);
+  font:900 60px var(--fd);color:#fff;text-shadow:0 0 18px var(--tc);transition:transform .7s cubic-bezier(.5,0,.7,.4),opacity .6s}
+.cbody:before{content:"";position:absolute;inset:12px;border:1.5px dashed rgba(255,255,255,.3);border-radius:10px}
+.clid{position:absolute;left:-10px;right:-10px;bottom:110px;height:32px;border-radius:12px;z-index:3;
+  background:linear-gradient(180deg,#7a55f0,#3e23a0);box-shadow:inset 0 0 0 2px var(--tc),0 0 22px var(--tcg);transform-origin:0 100%;
+  transition:transform .8s cubic-bezier(.3,1.5,.5,1),opacity .8s}
+.clid:after{content:"";position:absolute;left:50%;top:-9px;width:44px;height:10px;margin-left:-22px;border-radius:8px 8px 0 0;background:var(--tc);box-shadow:0 0 12px var(--tc)}
+.specimen:not(.open) .clid{animation:rattle 2.6s ease-in-out infinite}
+@keyframes rattle{0%,70%,100%{transform:none}75%{transform:translateY(-6px) rotate(-3deg)}80%{transform:translateY(-2px) rotate(2deg)}85%{transform:translateY(-5px) rotate(-1deg)}}
+.specimen.open .clid{transform:translate(-80px,-90px) rotate(-50deg);opacity:0}
+html[dir=rtl] .specimen.open .clid{transform:translate(80px,-90px) rotate(50deg);transform-origin:100% 100%}
+.specimen.open .cbody{transform:translateY(60px) scale(.8);opacity:0}
+.item{position:absolute;left:50%;bottom:58px;font-size:112px;line-height:1;z-index:1;opacity:0;transform:translate(-50%,40px) scale(.2);
+  transition:transform 1s cubic-bezier(.2,1.5,.4,1) .2s,opacity .4s .2s;filter:drop-shadow(0 0 26px var(--tc)) drop-shadow(0 18px 12px rgba(0,0,0,.6))}
+.specimen.open .item{opacity:1;transform:translate(-50%,-10px) scale(1);z-index:4;animation:bob 3.2s ease-in-out 1.3s infinite}
+@keyframes bob{0%,100%{transform:translate(-50%,-10px)}50%{transform:translate(-50%,-24px) rotate(3deg)}}
+.objname{position:absolute;left:8px;right:8px;bottom:8px;z-index:5;text-align:center;font-weight:800;font-size:19px;line-height:1.2;opacity:0;transform:translateY(10px);transition:.5s .9s;text-shadow:0 2px 10px #000}
+.objname .l-ar{font-size:.85em}
+.specimen.open .objname{opacity:1;transform:none}
+.sparks i{position:absolute;left:50%;top:48%;width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 12px var(--tc),0 0 4px #fff;z-index:5;animation:spk 1.1s cubic-bezier(.1,.8,.3,1) forwards}
+@keyframes spk{to{transform:translate(var(--x),var(--y)) scale(0);opacity:0}}
+.side{display:flex;flex-direction:column;gap:12px;min-width:0}
+/* hologram */
+.holo{position:relative;display:flex;gap:14px;align-items:flex-start;padding:12px 16px;border-radius:22px;overflow:hidden;min-height:112px;
+  background:linear-gradient(135deg,rgba(10,52,90,.65),rgba(28,12,74,.65));border:1px solid rgba(52,231,255,.5);box-shadow:inset 0 0 34px rgba(52,231,255,.15),0 0 26px rgba(52,231,255,.15)}
+.holo:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(52,231,255,.07) 0 2px,transparent 2px 5px);pointer-events:none;animation:scan 8s linear infinite}
+.holo:after{content:"";position:absolute;top:-40%;bottom:-40%;width:30%;left:-40%;background:linear-gradient(90deg,transparent,rgba(52,231,255,.14),transparent);transform:skewX(-20deg);animation:hsweep 5s ease-in-out infinite;pointer-events:none}
+@keyframes scan{to{background-position:0 100px}}
+@keyframes hsweep{0%,40%{left:-40%}100%{left:140%}}
+.avatar{position:relative;flex:0 0 80px;height:88px;animation:hov 3s ease-in-out infinite}
+@keyframes hov{50%{transform:translateY(-4px)}}
+.avatar svg{width:80px;height:80px;overflow:visible;filter:drop-shadow(0 0 10px rgba(52,231,255,.7));animation:flick 6s infinite}
+@keyframes flick{0%,96%,100%{opacity:1}97%{opacity:.55}98%{opacity:1}99%{opacity:.7}}
+.avatar .beam{position:absolute;left:14px;right:14px;bottom:-6px;height:16px;background:radial-gradient(ellipse,rgba(52,231,255,.6),transparent 70%);filter:blur(2px)}
+.r1{transform-origin:50px 50px;animation:rot 9s linear infinite}
+.r2{transform-origin:50px 50px;animation:rot 6s linear infinite reverse}
+@keyframes rot{to{transform:rotate(360deg)}}
+.eyes{transform-origin:50px 46px;animation:blink 4.5s infinite}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+.mouth{transform-origin:50px 62px;transition:transform .2s}
+.holo.talking .mouth{animation:talk .16s infinite alternate}
+@keyframes talk{to{transform:scaleY(3.2) scaleX(.8)}}
+.htext{position:relative;z-index:1;flex:1;min-width:0}
+.hname{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font:800 12px var(--fd);letter-spacing:.16em;color:var(--cy);margin-bottom:5px}
+.hname .hsub{font-family:var(--fb);letter-spacing:.02em;font-weight:700;color:#8fdfee;font-size:12px}
+.hname .live{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok);animation:pulse 1.2s infinite}
+.aitext{font-size:clamp(16px,1.7vw,19.5px);line-height:1.45;color:#e2fcff;text-shadow:0 0 14px rgba(52,231,255,.45);font-style:italic;min-height:2.8em}
+html[lang=ar] .aitext,.aitext .l-ar{font-style:normal}
+.aitext .cur:after{content:"▍";color:var(--cy);font-style:normal;animation:caret .8s infinite}
+@keyframes caret{50%{opacity:0}}
+/* flip cards */
+.clues{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:520px){.clues{grid-template-columns:1fr}}
-.clue{border-radius:16px;padding:12px 14px;background:#ffffff0d;border:2px dashed #ffffff30;min-height:84px;font-size:18px}
-.clue button{width:100%;height:100%;min-height:60px;background:none;font-size:20px;font-weight:700;color:var(--ink)}
-.clue.shown{border-style:solid;border-color:#ffc94a77;background:#ffc94a14}
-.clue h4{margin:0 0 4px;color:var(--gold);font-size:16px}
-.qline{margin:18px 0 10px;font-size:22px;font-weight:800;text-align:center}
+.flip{display:grid;perspective:1100px;cursor:pointer;min-height:104px}
+.fi{display:grid;transition:transform .8s cubic-bezier(.3,1.35,.5,1);transform-style:preserve-3d}
+.flip.on .fi{transform:rotateY(180deg)}
+.ff{grid-area:1/1;-webkit-backface-visibility:hidden;backface-visibility:hidden;border-radius:20px;padding:12px 14px;min-height:104px}
+.front{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(255,255,255,.1),rgba(255,255,255,.03));border:1.5px dashed rgba(255,255,255,.35);transition:border-color .2s,box-shadow .2s}
+.front .big{flex:0 0 auto;width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font-size:30px;background:linear-gradient(135deg,rgba(255,204,77,.3),rgba(255,79,216,.25));animation:wig 3s ease-in-out infinite}
+@keyframes wig{0%,80%,100%{transform:none}85%{transform:rotate(-10deg)}90%{transform:rotate(8deg)}}
+.front b{display:block;font-size:17px}
+.front small{display:block;color:var(--mute);font-size:13px;margin-top:2px}
+.front kbd{margin-inline-start:auto}
+@media (hover:hover){.flip:not(.on):hover .front{border-color:var(--gd);box-shadow:0 0 22px rgba(255,204,77,.25)}}
+.back{transform:rotateY(180deg);background:linear-gradient(135deg,rgba(255,204,77,.18),rgba(255,79,216,.12));border:1.5px solid rgba(255,204,77,.6);font-size:16px;line-height:1.45}
+.back h4{margin:0 0 4px;color:var(--gd);font-size:13px;letter-spacing:.06em;text-transform:uppercase;display:flex;gap:6px;align-items:center}
+.back h4 .l-en,.back h4 .l-ar{display:inline}
+.back h4 .l-ar{margin-inline-start:.4em}
+html[lang=ar] .back h4{letter-spacing:0}
+/* question + choices */
+.steal{display:none}
+.steal.on{--c:#fff;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px;padding:10px 14px;border-radius:18px;
+  background:linear-gradient(90deg,rgba(255,204,77,.22),rgba(255,79,216,.12));border:1.5px solid var(--gd);animation:rise .4s}
+.steal .sbolt{font-size:32px;animation:fireP .8s infinite}
+.steal .stxt{flex:1;min-width:200px}
+.steal .stxt b{color:var(--gd);font-size:18px}
+.qline{margin:14px 0 10px;font-size:clamp(18px,2vw,22px);font-weight:800;text-align:center}
+.qline .l-ar{font-size:.85em}
 .choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:520px){.choices{grid-template-columns:1fr}}
-.ch{padding:16px;border-radius:16px;font-size:21px;font-weight:700;background:#2a3d7e;border:2px solid #3f58aa;box-shadow:0 5px 0 #18245a;transition:.15s}
-.ch:hover:not(:disabled){background:#33499a}
+@media(max-width:600px){.choices{grid-template-columns:1fr}}
+.ch{position:relative;display:flex;align-items:center;gap:12px;min-height:64px;padding:12px 16px;border-radius:18px;font-size:18px;font-weight:700;text-align:start;
+  background:linear-gradient(135deg,#2f2080,#1c1352);border:1.5px solid rgba(255,255,255,.16);box-shadow:0 6px 0 #0c0730,0 10px 24px rgba(0,0,0,.4);
+  transition:transform .15s,box-shadow .15s,background .25s,opacity .3s,border-color .2s;animation:rise .45s both}
+.ch:nth-child(2){animation-delay:.05s}.ch:nth-child(3){animation-delay:.1s}.ch:nth-child(4){animation-delay:.15s}
+.ch .ct{flex:1;min-width:0}
+.ch .ct .l-ar{font-size:.86em;font-weight:600}
+body.both .ch .ct{text-align:center}
+.ch .num{flex:0 0 36px;height:36px;border-radius:11px;display:grid;place-items:center;font:900 16px var(--fd);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25)}
+@media (hover:hover){.ch:hover:not(:disabled){transform:translateY(-3px);border-color:var(--cy);box-shadow:0 9px 0 #0c0730,0 0 26px rgba(52,231,255,.35)}}
+.ch:active:not(:disabled){transform:translateY(4px);box-shadow:0 2px 0 #0c0730}
 .ch:disabled{cursor:default}
-.ch.right{background:var(--ok);border-color:var(--ok);color:#03250f;box-shadow:0 5px 0 #13824a}
-.ch.wrong{background:var(--bad);border-color:var(--bad);color:#3b0006;box-shadow:0 5px 0 #a3202d}
-.ch.dim{opacity:.45}
-.result{margin-top:16px;border-radius:18px;padding:16px;display:none}
-.result.on{display:block;animation:pop .4s}
-.result.good{background:#2fd27a1f;border:2px solid #2fd27a88}
-.result.bad{background:#ff5a6a1a;border:2px solid #ff5a6a88}
-.result h3{margin:0 0 8px;font-size:24px}
-.explain{margin-top:12px;background:#ffffff0d;border-radius:14px;padding:12px 14px}
-.explain h4{margin:0 0 8px;color:var(--gold);font-size:19px}
-.why{display:none;font-size:18px;color:#e6ecff;background:#0b1430;border-radius:12px;padding:10px 12px;margin:8px 0}
-.why.on{display:block}
-.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
-.b{padding:12px 18px;border-radius:14px;font-size:18px;font-weight:800;background:#ffffff18;border:2px solid #ffffff30}
-.b.ok{background:var(--ok);color:#03250f;border-color:var(--ok)}
-.b.no{background:#ff5a6a33;border-color:var(--bad)}
-.b.gold{background:var(--gold);color:#3a2600;border-color:var(--gold)}
-.next{width:100%;margin-top:14px;display:none}
-.next.on{display:block}
-.float{position:fixed;pointer-events:none;font-size:46px;font-weight:800;z-index:50;animation:up 1.2s forwards;text-shadow:0 3px 0 #0008}
-@keyframes up{to{transform:translateY(-120px);opacity:0}}
+.ch.right{background:linear-gradient(135deg,#25d891,#0c9a62);border-color:#8dffd0;color:#02200f;box-shadow:0 6px 0 #05603c,0 0 34px rgba(60,242,165,.55);animation:pop .55s}
+.ch.right .num{background:rgba(255,255,255,.35)}
+.ch.wrong{background:linear-gradient(135deg,#ff5577,#b8264a);border-color:#ffa3b5;box-shadow:0 6px 0 #6e1430;animation:shake .45s}
+.ch.dim{opacity:.38}
+@keyframes pop{0%{transform:scale(.92)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+/* result */
+.result{display:none;margin-top:14px}
+.result.on{display:block;animation:rise .5s both}
+.res-h{display:flex;gap:14px;align-items:center;padding:12px 16px;border-radius:20px}
+.res-h.good{background:linear-gradient(135deg,rgba(60,242,165,.2),rgba(60,242,165,.05));border:1.5px solid rgba(60,242,165,.6)}
+.res-h.bad{background:linear-gradient(135deg,rgba(255,85,119,.2),rgba(255,85,119,.05));border:1.5px solid rgba(255,85,119,.6)}
+.res-ic{font-size:42px;animation:pop .6s}
+.res-h h3{margin:0;font:900 clamp(20px,2.4vw,26px) var(--fd)}
+.res-h h3 .l-ar{font-family:var(--fa)}
+html[lang=ar] .res-h h3{font-family:var(--fa)}
+.res-ans{margin-top:3px;font-size:16px;color:#e4defc}
+.res-ans b{color:#fff}
+.bonus{margin-top:12px;padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid var(--edge)}
+.bonus-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-weight:800;font-size:17px;color:var(--gd)}
+.bonus-h .bh{display:flex;align-items:center;gap:8px}.bonus-h .bh i{font-style:normal;font-size:22px}
+.bonus-h .for{--c:#fff;display:inline-flex;align-items:center;gap:6px;padding:3px 12px;border-radius:999px;color:#fff;font-size:14px;background:rgba(255,255,255,.08);border:1.5px solid var(--c)}
+.why{display:none;margin:10px 0 4px;padding:12px 16px;border-radius:16px;background:rgba(6,3,22,.7);border-inline-start:4px solid var(--gd);font-size:17px;line-height:1.6}
+.why.on{display:block;animation:rise .4s}
+.why .l-ar{margin-top:.5em}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.verdict{padding:10px 16px;border-radius:14px;font-weight:800}
+.verdict.y{background:rgba(255,204,77,.18);color:var(--gd);border:1px solid var(--gd)}
+.verdict.n{background:rgba(255,255,255,.07);color:var(--mute)}
+.next{width:100%;margin-top:14px}
+.mini{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+.mc{--c:#fff;display:flex;align-items:center;gap:8px;padding:5px 12px 5px 6px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font-size:14px;font-weight:600}
+.mc .a{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:15px;border:1.5px solid var(--c)}
+.mc b{font:900 17px var(--fb)}
+.mc.turn{border-color:var(--c);box-shadow:0 0 14px var(--cg)}
+/* toasts */
+.float{position:fixed;z-index:95;pointer-events:none;font:900 54px var(--fd);text-shadow:0 0 24px currentColor,0 4px 0 rgba(0,0,0,.4);animation:floatUpT 1.4s cubic-bezier(.2,.8,.3,1) forwards}
+@keyframes floatUpT{0%{transform:translate(-50%,0) scale(.4);opacity:0}20%{transform:translate(-50%,-30px) scale(1.2);opacity:1}100%{transform:translate(-50%,-150px) scale(1);opacity:0}}
+.combo{--c:#ffcc4d;position:fixed;left:50%;top:36%;z-index:96;pointer-events:none;text-align:center;transform:translate(-50%,-50%);animation:comboIn 2.2s cubic-bezier(.2,1.4,.4,1) forwards}
+.combo b{display:block;font:900 clamp(44px,8vw,92px) var(--fd);background:linear-gradient(90deg,#ffd166,#ff8a3d,#ff4fd8);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 22px rgba(255,138,61,.8))}
+.combo span{display:inline-block;margin-top:4px;padding:5px 16px;border-radius:999px;background:rgba(0,0,0,.5);border:1.5px solid var(--c);font-weight:800;font-size:18px}
+@keyframes comboIn{0%{transform:translate(-50%,-50%) scale(.2) rotate(-10deg);opacity:0}18%{transform:translate(-50%,-50%) scale(1.1) rotate(2deg);opacity:1}80%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-70%) scale(.9);opacity:0}}
 
-/* ---------- end ---------- */
-.podium{display:flex;justify-content:center;align-items:flex-end;gap:14px;margin:30px 0 20px;flex-wrap:wrap}
-.pod{width:170px;border-radius:18px 18px 8px 8px;text-align:center;padding:14px 8px;background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line)}
-.pod .m{font-size:46px}
-.pod .nm{font-size:22px;font-weight:800}
-.pod .pt{font-size:34px;font-weight:800;color:var(--gold)}
-.endt{text-align:center;font-size:clamp(30px,5vw,54px);margin:20px 0 0}
-canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:60}
-.foot{color:var(--mute);text-align:center;font-size:14px;margin-top:18px}
+/* ---------- END ---------- */
+#sEnd{text-align:center}
+.drum{display:none;font:900 clamp(26px,4vw,46px) var(--fd);margin:60px 0 10px;color:#fff;animation:drumP .4s ease-in-out infinite alternate}
+.drum .l-ar{font-family:var(--fa);font-size:.7em}
+.drum.on{display:block}
+@keyframes drumP{to{transform:scale(1.06);text-shadow:0 0 30px var(--pk)}}
+.endt{font:900 clamp(28px,5vw,58px) var(--fd);margin:24px 0 2px;line-height:1.15;opacity:0}
+.endt.on{animation:champIn .9s cubic-bezier(.2,1.4,.4,1) forwards}
+.endt .l-ar{font-family:var(--fa);font-size:.7em}
+html[lang=ar] .endt{font-family:var(--fa)}
+@keyframes champIn{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
+.endsub{color:var(--mute);font-weight:700;letter-spacing:.08em;opacity:0;transition:opacity .6s .4s}
+.endsub.on{opacity:1}
+.podium{display:flex;justify-content:center;align-items:flex-end;gap:14px;margin:22px auto 8px;min-height:330px;max-width:680px}
+.pcol{--c:#fff;flex:1;max-width:200px;display:flex;flex-direction:column;align-items:center;opacity:0;transform:translateY(80px)}
+.pcol.up{animation:podUp .9s cubic-bezier(.2,1.2,.3,1) forwards}
+@keyframes podUp{to{opacity:1;transform:none}}
+.pav{position:relative;width:76px;height:76px;border-radius:24px;font-size:40px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:2.5px solid var(--c);box-shadow:0 0 34px var(--cg)}
+.crown{position:absolute;top:-46px;left:50%;font-size:44px;opacity:0;transform:translate(-50%,-40px)}
+.pcol.up .crown{animation:crown .8s .7s cubic-bezier(.2,1.6,.4,1) forwards}
+@keyframes crown{to{opacity:1;transform:translate(-50%,0) rotate(-8deg)}}
+.pnm{font-weight:800;font-size:18px;margin:8px 0 0;line-height:1.2;max-width:100%;overflow-wrap:anywhere}
+.pnm .l-ar{font-size:.85em}
+.pmem{font-size:12px;color:var(--mute);margin-top:2px}
+.ppt{font:900 34px var(--fb);color:var(--gd);margin:2px 0}
+.pblock{width:100%;border-radius:18px 18px 6px 6px;display:grid;place-items:start center;padding-top:10px;font:900 44px var(--fd);color:rgba(255,255,255,.9);
+  background:linear-gradient(180deg,var(--cg),rgba(255,255,255,.04));border:1px solid var(--edge);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.p1 .pblock{height:170px}.p2 .pblock{height:125px}.p3 .pblock{height:92px}
+.rest{display:flex;flex-direction:column;gap:6px;max-width:460px;margin:8px auto 0}
+.rrow{--c:#fff;display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);text-align:start;opacity:0;animation:rise .5s forwards}
+.rrow .rk{font:900 16px var(--fd);color:var(--mute);width:26px}
+.rrow .nm{flex:1;font-weight:700;min-width:0}
+.rrow b{font:900 22px var(--fb)}
+.stats{margin:12px auto 0;color:#d6cff8;font-size:15px;line-height:1.5}
+.endbtns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:20px 0 4px}
+
+/* ---------- responsive ---------- */
+@media(max-width:760px){
+  .screen{padding:68px 12px 26px}
+  .hdr{padding-inline-end:0}
+  .tools{top:10px;inset-inline-end:10px}
+  .seg button{padding:6px 9px;font-size:13px}
+  .title-wrap{padding-top:30px}
+  .logo3d{transform:scale(.7);margin:-30px auto -34px}
+  .specimen{height:250px}
+  .item{font-size:92px}
+  .podium{gap:8px;min-height:290px}
+  .pav{width:60px;height:60px;font-size:32px;border-radius:18px}
+  .p1 .pblock{height:130px}.p2 .pblock{height:96px}.p3 .pblock{height:72px}
+  .pblock{font-size:32px}
+  .ppt{font-size:24px}
+  .turnbar{padding:10px 12px;gap:10px}
+  .thint{flex-basis:100%;order:5}
+  .modal{padding:6px 6px 20px}
+  .play{padding:12px 12px 14px;border-radius:22px}
+  .credit{font-size:14px;padding:12px 14px}
+}
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
-<body>
+<body class="both">
+<canvas id="bg"></canvas>
 <canvas id="fx"></canvas>
+<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="tg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34e7ff"/><stop offset=".5" stop-color="#8b5cf6"/><stop offset="1" stop-color="#ff4fd8"/></linearGradient></defs></svg>
+
+<!-- toolbar -->
+<div class="tools">
+  <div class="seg" id="langSeg">
+    <button data-l="en" onclick="setLang('en')">EN</button>
+    <button data-l="ar" onclick="setLang('ar')">عربي</button>
+    <button data-l="both" onclick="setLang('both')">EN+ع</button>
+  </div>
+  <button class="ib" id="sndBtn" onclick="toggleMute()" data-tt="sound"></button>
+  <button class="ib" onclick="toggleFS()" data-tt="fs"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+</div>
+
+<!-- ============ TITLE ============ -->
+<section class="screen on" id="sTitle">
+  <div class="floaters" id="floaters"></div>
+  <div class="title-wrap">
+    <div class="logo3d">
+      <div class="cube-glow"></div>
+      <div class="orbit"><i></i></div><div class="orbit o2"><i></i></div>
+      <div class="cube"><b class="f1">?</b><b class="f2">?</b><b class="f3">?</b><b class="f4">?</b><b class="f5">?</b><b class="f6">?</b></div>
+    </div>
+    <h1 class="mega" data-t="title"></h1>
+    <p class="tagline" data-t="tag"></p>
+    <button class="cta" onclick="toSetup()"><span data-t="launch"></span> <kbd>Enter</kbd></button>
+    <div class="credit" id="credit1"></div>
+  </div>
+</section>
 
 <!-- ============ SETUP ============ -->
-<section class="screen on" id="sSetup"><div class="wrap">
-  <div class="top">
-    <div class="brand"><div class="logo">📦</div><div><h1 data-t="title"></h1><small data-t="subtitle"></small></div></div>
-    <button class="lang" onclick="toggleLang()" data-t="langBtn"></button>
-  </div>
+<section class="screen" id="sSetup"><div class="wrap">
+  <div class="hdr"><div class="brand" onclick="show('sTitle')"><div class="blogo">?</div><div class="bname" data-t="title"></div></div></div>
+  <h2 class="h2" data-ti="howT"></h2>
+  <div class="rulecards" id="rules"></div>
   <div class="setup">
     <div class="panel">
-      <h2 data-t="howTitle"></h2>
-      <ol class="rules" id="rules"></ol>
+      <h3>👥 <span data-ti="playersT"></span></h3>
+      <div class="modeseg" id="modeSeg"></div>
+      <div class="lbl" id="countLbl"></div>
+      <div class="row" id="countRow"></div>
+      <div class="lbl" data-ti="namesL"></div>
+      <div id="names"></div>
     </div>
     <div class="panel">
-      <div class="label" data-t="teamsLbl"></div>
-      <div class="row" id="optTeams"></div>
-      <div class="teams" id="teamNames"></div>
-      <div class="label" data-t="boxesLbl"></div>
-      <div class="row" id="optBoxes"></div>
-      <div class="label" data-t="timerLbl"></div>
-      <div class="row" id="optTimer"></div>
-      <button class="go" onclick="startGame()" data-t="start"></button>
+      <h3>🎛️ <span data-ti="gameT"></span></h3>
+      <div class="lbl" data-ti="topicL" style="margin-top:0"></div>
+      <div class="topics" id="topics"></div>
+      <div class="lbl" data-ti="boxesL"></div>
+      <div class="row" id="boxRow"></div>
+      <div class="lbl" data-ti="timerL"></div>
+      <div class="row" id="timerRow"></div>
+      <div class="lbl" data-ti="stealL"></div>
+      <div id="stealBox"></div>
+      <div class="hint" data-t="stealD"></div>
     </div>
   </div>
-  <div class="foot" data-t="foot"></div>
+  <div class="startbar">
+    <button class="cta" onclick="startGame()"><span>🚀</span><span data-t="start"></span></button>
+    <div class="keys" data-t="keys"></div>
+  </div>
 </div></section>
 
 <!-- ============ BOARD ============ -->
-<section class="screen" id="sBoard"><div class="wrap">
-  <div class="top">
-    <div class="brand"><div class="logo">📦</div><div><h1 data-t="title"></h1></div></div>
-    <div class="scores" id="scores"></div>
+<section class="screen" id="sBoard"><div class="wrap wide">
+  <div class="hdr"><div class="brand" onclick="show('sTitle')"><div class="blogo">?</div><div class="bname" data-t="title"></div></div></div>
+  <div class="turnbar" id="turnbar"></div>
+  <div class="bgrid">
+    <div class="board" id="board"></div>
+    <aside class="panel lbp">
+      <h3><span>🏆 <span data-ti="lbT"></span></span></h3>
+      <div class="lb" id="lb"></div>
+      <div class="lbfoot"><button class="ghost" id="finBtn" onclick="finishAsk()" data-t="finish"></button></div>
+    </aside>
   </div>
-  <div class="turnlbl" id="turnLbl"></div>
-  <div class="board" id="board"></div>
-  <div class="foot"><button class="b" onclick="endGame()" data-t="finishNow"></button></div>
 </div></section>
 
 <!-- ============ END ============ -->
 <section class="screen" id="sEnd"><div class="wrap">
+  <div class="drum" id="drum"></div>
   <h1 class="endt" id="endTitle"></h1>
+  <div class="endsub" id="endSub"></div>
   <div class="podium" id="podium"></div>
-  <div style="max-width:420px;margin:0 auto"><button class="go" onclick="show('sSetup')" data-t="again"></button></div>
+  <div class="rest" id="rest"></div>
+  <div class="stats" id="stats"></div>
+  <div class="endbtns">
+    <button class="cta" onclick="startGame()"><span>🔁</span><span data-t="again"></span></button>
+    <button class="ghost" onclick="show('sSetup')" data-t="newSetup"></button>
+  </div>
+  <div class="credit" id="credit2"></div>
 </div></section>
 
 <!-- ============ PLAY MODAL ============ -->
-<div class="modal" id="mPlay"><div class="play">
+<div class="modal" id="mPlay"><div class="play" id="play">
   <div class="ph">
-    <h2 id="pTitle"></h2>
-    <div class="pill" id="pTeam"></div>
-    <div class="timer" id="timerWrap">
-      <svg width="74" height="74"><circle cx="37" cy="37" r="31" stroke="#ffffff22" stroke-width="7" fill="none"/>
-      <circle id="tArc" cx="37" cy="37" r="31" stroke="#ffc94a" stroke-width="7" fill="none" stroke-linecap="round" stroke-dasharray="194.8" stroke-dashoffset="0"/></svg>
-      <b id="tNum"></b>
-    </div>
+    <span class="boxno" id="pNo"></span>
+    <span id="pTopic"></span>
+    <div class="grow"></div>
+    <div class="who2" id="pWho"></div>
+    <div class="timer" id="timer"><svg viewBox="0 0 80 80"><circle class="trk" cx="40" cy="40" r="34"/><circle class="arc" id="tArc" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="0"/></svg><b id="tNum"></b></div>
+    <button class="backbtn" id="backBtn" onclick="backToBoard()" data-tt="back">↩</button>
   </div>
   <div class="stage">
-    <div>
-      <div class="bigbox shake" id="bigBox"><span class="q">?</span></div>
+    <div class="specimen" id="spec">
+      <div class="grid"></div>
+      <div class="rays"><i></i></div>
+      <div class="pedestal"></div>
+      <div class="crate"><div class="item" id="crItem"></div><div class="cbody">?</div><div class="clid"></div></div>
+      <div class="sparks" id="sparks"></div>
+      <div class="flash"></div>
       <div class="objname" id="objName"></div>
     </div>
-    <div>
-      <div class="ai"><div class="bot">🤖</div><div class="t"><small data-t="aiLbl"></small><span id="aiText" class="cur"></span></div></div>
+    <div class="side">
+      <div class="holo" id="holo">
+        <div class="avatar">
+          <svg viewBox="0 0 100 100">
+            <defs><radialGradient id="hg" cx=".5" cy=".4" r=".6"><stop offset="0" stop-color="#b8f8ff" stop-opacity=".95"/><stop offset=".6" stop-color="#34c8ff" stop-opacity=".45"/><stop offset="1" stop-color="#8b5cf6" stop-opacity=".15"/></radialGradient></defs>
+            <circle class="r1" cx="50" cy="50" r="47" fill="none" stroke="#34e7ff" stroke-width="1.6" stroke-dasharray="7 6"/>
+            <circle class="r2" cx="50" cy="50" r="41" fill="none" stroke="#ff4fd8" stroke-width="1.3" stroke-dasharray="34 12"/>
+            <line x1="50" y1="12" x2="50" y2="20" stroke="#b8f8ff" stroke-width="2"/><circle cx="50" cy="10" r="3" fill="#ff4fd8"/>
+            <rect x="22" y="20" width="56" height="54" rx="20" fill="url(#hg)" stroke="#b8f8ff" stroke-width="1.5"/>
+            <g class="eyes"><ellipse cx="39" cy="46" rx="5" ry="6" fill="#ffffff"/><ellipse cx="61" cy="46" rx="5" ry="6" fill="#ffffff"/></g>
+            <rect class="mouth" x="40" y="60" width="20" height="4" rx="2" fill="#ffffff"/>
+          </svg>
+          <div class="beam"></div>
+        </div>
+        <div class="htext"><div class="hname" id="hname"></div><div class="aitext" id="aiText"></div></div>
+      </div>
       <div class="clues">
-        <div class="clue" id="cTouch"></div>
-        <div class="clue" id="cLook"></div>
+        <div class="flip" id="fTouch" onclick="clue('touch')"><div class="fi"></div></div>
+        <div class="flip" id="fLook" onclick="clue('look')"><div class="fi"></div></div>
       </div>
     </div>
   </div>
-  <div class="qline" data-t="question"></div>
+  <div class="steal" id="steal"></div>
+  <div class="qline" id="qline"></div>
   <div class="choices" id="choices"></div>
-  <div class="result" id="result">
-    <h3 id="resTitle"></h3>
-    <div class="explain">
-      <h4 data-t="bonusTitle"></h4>
-      <div class="why" id="why"></div>
-      <div class="btns" id="bonusBtns">
-        <button class="b" onclick="showWhy()" data-t="showWhy"></button>
-        <button class="b ok" onclick="bonus(true)" data-t="bonusYes"></button>
-        <button class="b no" onclick="bonus(false)" data-t="bonusNo"></button>
-      </div>
-    </div>
-  </div>
-  <button class="go next" id="nextBtn" onclick="closeBox()" data-t="nextTeam"></button>
+  <div class="result" id="result"></div>
+  <div class="mini" id="mini"></div>
 </div></div>
 
 <script>
-/* ===================== CONTENT ===================== */
-const ITEMS = [
- {icon:"🧲", name:{en:"Magnet",ar:"مغناطيس"},
-  touch:{en:"Cold, heavy metal. Something keeps sticking to it!",ar:"معدن بارد وثقيل.. وفيه أشياء تلتصق فيه!"},
-  look:{en:"Paper clips jump towards it from a distance.",ar:"مشابك الورق تقفز نحوه من مسافة."},
-  ai:{en:"I pull without hands, and I have two faces that never agree: North and South.",ar:"أجذب بلا أيدٍ، ولي وجهان لا يتفقان أبدًا: شمال وجنوب."},
-  choices:[{en:"Magnetism",ar:"المغناطيسية"},{en:"Friction",ar:"الاحتكاك"},{en:"Refraction",ar:"انكسار الضوء"},{en:"Sound",ar:"الصوت"}],
-  why:{en:"A magnet has a magnetic field that attracts iron and steel. Like poles repel, unlike poles attract.",ar:"للمغناطيس مجال مغناطيسي يجذب الحديد والفولاذ. الأقطاب المتشابهة تتنافر والمختلفة تتجاذب."}},
- {icon:"🔺", name:{en:"Prism",ar:"منشور زجاجي"},
-  touch:{en:"Smooth glass, a triangle shape with sharp edges.",ar:"زجاج أملس على شكل مثلث وحوافه حادة."},
-  look:{en:"Shine a torch through it and a rainbow appears on the wall.",ar:"لما نسلط عليه ضوء كشاف يظهر قوس قزح على الجدار."},
-  ai:{en:"Give me white light, and I'll give you back seven colours.",ar:"أعطني ضوءًا أبيض.. أردّه لك سبعة ألوان."},
-  choices:[{en:"Dispersion of light",ar:"تحلل الضوء"},{en:"Reflection",ar:"انعكاس الضوء"},{en:"Magnetism",ar:"المغناطيسية"},{en:"Gravity",ar:"الجاذبية"}],
-  why:{en:"Light slows down and bends (refracts) in glass. Each colour bends by a different amount, so white light splits into a spectrum.",ar:"الضوء يبطئ وينكسر داخل الزجاج، وكل لون ينكسر بمقدار مختلف، فينفصل الضوء الأبيض إلى ألوان الطيف."}},
- {icon:"🌀", name:{en:"Spring",ar:"نابض (زنبرك)"},
-  touch:{en:"Coiled metal. When you squeeze it, it pushes back.",ar:"سلك ملفوف.. إذا ضغطته يدفع يدك للخلف."},
-  look:{en:"Stretch it, let go, and it returns to its shape.",ar:"إذا سحبته وتركته يرجع لشكله الأصلي."},
-  ai:{en:"Squeeze me and I'll store your effort. Let go and I'll give it all back.",ar:"اضغطني أخزّن تعبك.. اتركني أرجعه لك كله."},
-  choices:[{en:"Elasticity",ar:"المرونة"},{en:"Buoyancy",ar:"الطفو"},{en:"Static electricity",ar:"الكهرباء الساكنة"},{en:"Evaporation",ar:"التبخر"}],
-  why:{en:"A spring stores elastic potential energy. The more you stretch it, the bigger the force pulling it back (Hooke's law).",ar:"النابض يخزن طاقة وضع مرونية، وكلما زاد الشد زادت القوة التي تعيده (قانون هوك)."}},
- {icon:"🪞", name:{en:"Small mirror",ar:"مرآة صغيرة"},
-  touch:{en:"Flat, very smooth and cold, like glass.",ar:"مسطح وأملس جدًا وبارد مثل الزجاج."},
-  look:{en:"You can see yourself, and torch light bounces up to the ceiling.",ar:"تشوف نفسك فيه، وضوء الكشاف يرتد للسقف."},
-  ai:{en:"I copy you perfectly... but I secretly swap your left and right.",ar:"أقلّدك تمامًا.. لكني أبدّل يمينك ويسارك سرًّا."},
-  choices:[{en:"Reflection of light",ar:"انعكاس الضوء"},{en:"Refraction",ar:"انكسار الضوء"},{en:"Magnetism",ar:"المغناطيسية"},{en:"Friction",ar:"الاحتكاك"}],
-  why:{en:"Light bounces off the shiny surface. The angle of incidence equals the angle of reflection.",ar:"الضوء يرتد عن السطح اللامع، وزاوية السقوط تساوي زاوية الانعكاس."}},
- {icon:"🎈", name:{en:"Balloon",ar:"بالون"},
-  touch:{en:"Soft, light rubber filled with air.",ar:"مطاط ناعم وخفيف مليان هوا."},
-  look:{en:"Rub it on your hair: it sticks to the wall and lifts your hair up!",ar:"افركه في شعرك: يلتصق في الجدار ويرفع شعرك!"},
-  ai:{en:"Rub me on your head and I'll make your hair stand up to say hello.",ar:"افركني في رأسك.. وأخلّي شعرك يوقف يسلّم عليك."},
-  choices:[{en:"Static electricity",ar:"الكهرباء الساكنة"},{en:"Magnetism",ar:"المغناطيسية"},{en:"Gravity",ar:"الجاذبية"},{en:"Sound",ar:"الصوت"}],
-  why:{en:"Rubbing moves electrons from hair to balloon, so it becomes charged. Opposite charges attract.",ar:"الفرك ينقل الإلكترونات من الشعر إلى البالون فيصبح مشحونًا، والشحنات المختلفة تتجاذب."}},
- {icon:"🎵", name:{en:"Tuning fork",ar:"شوكة رنانة"},
-  touch:{en:"A metal U-shape with a handle. It tingles after you tap it.",ar:"معدن على شكل U وله مقبض.. يرجف بعد ما تطقه."},
-  look:{en:"Dip it in water after tapping and the water splashes!",ar:"إذا غطسته في الماي بعد الطق، الماي يتطاير!"},
-  ai:{en:"Tap me once and I'll sing the same note... until I get tired.",ar:"اطرقني مرة.. وأغني نفس النغمة لين أتعب."},
-  choices:[{en:"Sound vibrations",ar:"اهتزاز الصوت"},{en:"Light",ar:"الضوء"},{en:"Magnetism",ar:"المغناطيسية"},{en:"Friction",ar:"الاحتكاك"}],
-  why:{en:"Sound is made by vibrations. The fork vibrates the air at a fixed frequency, giving one pitch.",ar:"الصوت ينتج عن الاهتزاز. الشوكة تهز الهواء بتردد ثابت فتعطي نغمة واحدة."}},
- {icon:"🔍", name:{en:"Magnifying glass",ar:"عدسة مكبرة"},
-  touch:{en:"Round glass, thick in the middle and thin at the edges, with a handle.",ar:"زجاج دائري، سميك في النص ورقيق على الأطراف، وله مقبض."},
-  look:{en:"Small letters look much bigger through it.",ar:"الحروف الصغيرة تبان كبيرة من خلاله."},
-  ai:{en:"My belly is the thickest part of me, and I turn ants into giants.",ar:"بطني أسمك جزء فيّ.. وأحوّل النمل إلى عمالقة."},
-  choices:[{en:"Refraction by a lens",ar:"انكسار الضوء في العدسة"},{en:"Reflection",ar:"انعكاس الضوء"},{en:"Static electricity",ar:"الكهرباء الساكنة"},{en:"Elasticity",ar:"المرونة"}],
-  why:{en:"A convex lens bends light rays inwards, so the image we see looks larger.",ar:"العدسة المحدبة تكسر أشعة الضوء وتجمعها، فتبدو الصورة أكبر."}},
- {icon:"🧭", name:{en:"Compass",ar:"بوصلة"},
-  touch:{en:"A small round case. Something spins freely inside.",ar:"علبة دائرية صغيرة.. وفيها شي يدور بحرية."},
-  look:{en:"Turn it any way: the needle always points the same direction.",ar:"لفها مثل ما تبي: الإبرة دايمًا تأشر لنفس الاتجاه."},
-  ai:{en:"Spin me as much as you like, I'll always look North.",ar:"لفّني قد ما تبي.. بظل أطالع الشمال."},
-  choices:[{en:"Earth's magnetic field",ar:"المجال المغناطيسي للأرض"},{en:"Gravity",ar:"الجاذبية"},{en:"Sound",ar:"الصوت"},{en:"Light",ar:"الضوء"}],
-  why:{en:"The needle is a tiny magnet. It lines up with Earth's magnetic field and points North.",ar:"الإبرة مغناطيس صغير يصطف مع المجال المغناطيسي للأرض فيشير للشمال."}},
- {icon:"🧱", name:{en:"Sandpaper block",ar:"قطعة ورق صنفرة"},
-  touch:{en:"Very rough on one side, like tiny sand grains.",ar:"خشن جدًا من جهة، كأنه حبات رمل صغيرة."},
-  look:{en:"A toy car stops quickly when it rolls onto it.",ar:"السيارة اللعبة توقف بسرعة لما تمشي عليه."},
-  ai:{en:"I'm the enemy of sliding, and I turn motion into heat.",ar:"أنا عدو الانزلاق.. وأحوّل الحركة إلى حرارة."},
-  choices:[{en:"Friction",ar:"الاحتكاك"},{en:"Buoyancy",ar:"الطفو"},{en:"Refraction",ar:"انكسار الضوء"},{en:"Magnetism",ar:"المغناطيسية"}],
-  why:{en:"Friction is a force that opposes motion between two surfaces. Rough surfaces make more friction.",ar:"الاحتكاك قوة تعاكس الحركة بين سطحين، والسطوح الخشنة يكون احتكاكها أكبر."}},
- {icon:"🏓", name:{en:"Ping-pong ball",ar:"كرة طاولة"},
-  touch:{en:"Very light and hollow, it sounds empty when you tap it.",ar:"خفيفة جدًا ومجوفة، صوتها فاضي لما تطقها."},
-  look:{en:"Push it under water and it pops right back up.",ar:"إذا غطستها في الماي تطلع فوق بسرعة."},
-  ai:{en:"The water tries to drown me, but ends up lifting me.",ar:"الماء يحاول يغرقني.. ويطلع هو اللي يرفعني."},
-  choices:[{en:"Buoyancy",ar:"الطفو"},{en:"Gravity",ar:"الجاذبية"},{en:"Elasticity",ar:"المرونة"},{en:"Static electricity",ar:"الكهرباء الساكنة"}],
-  why:{en:"Water pushes up with an upthrust force. The ball is less dense than water, so the upthrust beats its weight and it floats.",ar:"الماء يدفع لأعلى بقوة الطفو، وكثافة الكرة أقل من الماء فتغلب قوة الطفو وزنها فتطفو."}},
- {icon:"⏱️", name:{en:"Pendulum",ar:"بندول"},
-  touch:{en:"A string with a small heavy ball tied at the end.",ar:"خيط في طرفه كرة صغيرة ثقيلة."},
-  look:{en:"Let it go and it swings back and forth, steady like a clock.",ar:"إذا تركته يتأرجح رايح جاي بانتظام مثل الساعة."},
-  ai:{en:"Gravity pulls me down, but I keep coming back like a clock.",ar:"الجاذبية تسحبني لتحت.. بس أرجع كل مرة مثل الساعة."},
-  choices:[{en:"Gravity and swinging motion",ar:"الجاذبية والحركة الاهتزازية"},{en:"Magnetism",ar:"المغناطيسية"},{en:"Light",ar:"الضوء"},{en:"Static electricity",ar:"الكهرباء الساكنة"}],
-  why:{en:"Gravity pulls the ball to the lowest point, and its motion carries it past to the other side, again and again. A longer string swings more slowly.",ar:"الجاذبية تسحب الكرة لأخفض نقطة، وحركتها تكمل بها للجهة الثانية وهكذا. وكلما طال الخيط صار التأرجح أبطأ."}},
- {icon:"💡", name:{en:"Battery and bulb",ar:"بطارية ومصباح"},
-  touch:{en:"A small cylinder with + and − ends, and some wires.",ar:"أسطوانة صغيرة لها طرف + وطرف −، ومعها أسلاك."},
-  look:{en:"The bulb only glows when the wires make a complete loop.",ar:"المصباح ما يضوي إلا لما الأسلاك تسوي دائرة كاملة."},
-  ai:{en:"Close my circle and I'll light up the night. Break it, and everything goes dark.",ar:"أغلق دائرتي أنوّر لك الليل.. افتحها ويصير كل شي ظلام."},
-  choices:[{en:"Closed electric circuit",ar:"الدائرة الكهربائية المغلقة"},{en:"Reflection",ar:"انعكاس الضوء"},{en:"Friction",ar:"الاحتكاك"},{en:"Buoyancy",ar:"الطفو"}],
-  why:{en:"Electric current only flows in a closed circuit. The battery's chemical energy becomes electrical energy, then light.",ar:"التيار الكهربائي لا يسري إلا في دائرة مغلقة، وطاقة البطارية الكيميائية تتحول إلى كهربائية ثم ضوئية."}}
+"use strict";
+/* ============================== CONTENT ==============================
+   Each item: i=icon, c=category, n=name, t=touch clue, l=look clue, a=AI riddle,
+   o=4 choices (index 0 is correct), w=short explanation. All [English, Arabic].
+   ⟦...⟧ marks a short equation.                                           */
+const CAT={
+  motion:{ic:"🏁",col:"#34e7ff",n:["Speed & Motion","السرعة والحركة"]},
+  reflect:{ic:"🪞",col:"#ff4fd8",n:["Reflection","الانعكاس"]},
+  mech:{ic:"⚙️",col:"#ffcc4d",n:["Forces & Energy","القوى والطاقة"]},
+  em:{ic:"⚡",col:"#a78bfa",n:["Electricity & Magnetism","الكهرباء والمغناطيسية"]},
+  wave:{ic:"🌈",col:"#60a5fa",n:["Light & Sound","الضوء والصوت"]},
+  therm:{ic:"🔥",col:"#ff8a5b",n:["Heat & Matter","الحرارة والمادة"]}
+};
+const FILTERS=[
+  {id:"sr",ic:"⭐",cats:["motion","reflect"],n:["Speed & Reflection","السرعة والانعكاس"],star:1},
+  {id:"motion",ic:"🏁",cats:["motion"],n:["Speed & Motion","السرعة والحركة"]},
+  {id:"reflect",ic:"🪞",cats:["reflect"],n:["Reflection","الانعكاس"]},
+  {id:"basics",ic:"🧪",cats:["mech","em","wave","therm"],n:["More basics","أساسيات أخرى"]},
+  {id:"all",ic:"🌌",cats:null,n:["All topics","كل المواضيع"]}
+];
+const C={
+  mag:["Magnetism","المغناطيسية"], refl:["Reflection of light","انعكاس الضوء"], stat:["Static electricity","الكهرباء الساكنة"],
+  snd:["Sound","الصوت"], fric:["Friction","الاحتكاك"], echo:["Echo","الصدى"], spd:["Speed","السرعة"], grav:["Gravity","الجاذبية"]
+};
+const ITEMS=[
+/* ---------- SPEED & MOTION ---------- */
+{i:"⏱️",c:"motion",n:["Stopwatch & toy car","ساعة إيقاف وسيارة لعبة"],
+ t:["A stopwatch with a big button, and a measuring tape.","ساعة إيقاف بزر كبير، وشريط قياس."],
+ l:["The toy car rolls 2 metres in 4 seconds.","تقطع السيارة اللعبة مسافة 2 متر في 4 ثوانٍ."],
+ a:["Tell me how far and how long… and I'll tell you how fast!","أخبريني كم المسافة وكم الزمن… أخبرك كم السرعة!"],
+ o:[["Speed (distance ÷ time)","السرعة (المسافة ÷ الزمن)"],C.mag,C.refl,C.stat],
+ w:["Speed tells us how far something moves each second: ⟦speed = distance ÷ time⟧, so the car's speed is 2 ÷ 4 = 0.5 m/s.","السرعة تخبرنا كم يقطع الجسم في كل ثانية: ⟦السرعة = المسافة ÷ الزمن⟧، فسرعة السيارة 2 ÷ 4 = 0.5 م/ث."]},
+{i:"📈",c:"motion",n:["Distance–time graph","منحنى المسافة والزمن"],
+ t:["A card with a graph printed on it, and a small motion sensor.","بطاقة عليها رسم بياني مطبوع، وحسّاس حركة صغير."],
+ l:["Two lines for two runners: one line is steeper than the other.","خطّان لعدّاءتين: أحد الخطين أشد ميلاً من الآخر."],
+ a:["The steeper I climb, the faster you moved. If I lie flat, you stood still!","كلما صعدتُ بميل أكبر كنتِ أسرع… وإذا استلقيتُ أفقياً فأنتِ واقفة!"],
+ o:[["Distance–time graph: steeper = faster","منحنى المسافة والزمن: الأشد ميلاً = الأسرع"],C.refl,C.mag,C.snd],
+ w:["On a distance–time graph, a steeper line means a higher speed, and a flat line means the object is not moving.","في منحنى المسافة والزمن يعني الخط الأشد ميلاً سرعة أكبر، والخط الأفقي يعني أن الجسم ساكن."]},
+{i:"🎞️",c:"motion",n:["Ticker tape","الشريط المنقّط"],
+ t:["A long paper strip covered with little dots.","شريط ورقي طويل عليه نقاط صغيرة."],
+ l:["A toy car pulled the tape down a slope: the dots get further and further apart.","سحبت سيارة لعبة الشريط على منحدر: النقاط تتباعد أكثر فأكثر."],
+ a:["My steps get longer and longer… because I keep getting faster!","خطواتي تطول وتطول… لأنني أزداد سرعة باستمرار!"],
+ o:[["Acceleration (speeding up)","التسارع (زيادة السرعة)"],C.refl,C.mag,C.stat],
+ w:["The dots are printed at equal time intervals, so bigger gaps mean the car moves further each time: it is speeding up (accelerating).","تُطبع النقاط في فترات زمنية متساوية، فتباعدها يعني أن السيارة تقطع مسافة أكبر في كل مرة، أي أنها تتسارع."]},
+{i:"🚆",c:"motion",n:["Two toy trains","قطاران لعبة"],
+ t:["Two toy trains on tracks side by side.","قطاران لعبة على سكتين متجاورتين."],
+ l:["When both move together at the same speed, each one looks still to the other!","عندما يتحركان معاً بالسرعة نفسها يبدو كل منهما ساكناً بالنسبة للآخر!"],
+ a:["Am I moving or standing still? It depends on who is watching me.","هل أنا متحرك أم ساكن؟ يعتمد ذلك على من يراقبني."],
+ o:[["Relative motion","الحركة النسبية"],C.refl,C.snd,C.mag],
+ w:["Motion is relative: we describe it compared with something else. Two trains moving at the same speed in the same direction are at rest relative to each other.","الحركة نسبية: نصفها دائماً بالمقارنة مع شيء آخر. فالقطاران المتحركان بالسرعة نفسها وفي الاتجاه نفسه ساكنان أحدهما بالنسبة إلى الآخر."]},
+{i:"🪙",c:"motion",n:["Coin, card & glass","قطعة نقود وبطاقة وكأس"],
+ t:["A card on top of a glass, with a coin resting on the card.","بطاقة فوق كأس، وعليها قطعة نقود."],
+ l:["Flick the card quickly: the card flies away, but the coin drops into the glass!","انقري البطاقة بسرعة: تطير البطاقة، لكن القطعة تسقط في الكأس!"],
+ a:["I was resting… and I like to stay resting.","كنتُ ساكنة… وأحب أن أبقى ساكنة."],
+ o:[["Inertia (Newton's 1st law)","القصور الذاتي (قانون نيوتن الأول)"],C.refl,C.stat,C.snd],
+ w:["An object at rest stays at rest unless a force moves it. The card moved too fast to drag the coin, so the coin stayed and then fell into the glass.","الجسم الساكن يبقى ساكناً ما لم تؤثر فيه قوة. تحركت البطاقة بسرعة كبيرة فلم تسحب القطعة معها، فبقيت مكانها ثم سقطت في الكأس."]},
+{i:"🚗",c:"motion",n:["Toy car & towel","سيارة لعبة ومنشفة"],
+ t:["A toy car, a smooth table and a rough towel.","سيارة لعبة، وطاولة ملساء، ومنشفة خشنة."],
+ l:["With the same push, the car goes far on the table but stops quickly on the towel.","بالدفعة نفسها تقطع السيارة مسافة طويلة على الطاولة، لكنها تتوقف بسرعة على المنشفة."],
+ a:["Rough roads hold me back and steal my speed.","الطرق الخشنة تعيقني وتسرق سرعتي."],
+ o:[C.fric,C.refl,C.mag,C.echo],
+ w:["Friction is a force that acts against motion. The rough towel makes more friction than the smooth table, so the car slows down and stops sooner.","الاحتكاك قوة تعاكس الحركة. المنشفة الخشنة تسبب احتكاكاً أكبر من الطاولة الملساء، فتتباطأ السيارة وتتوقف أسرع."]},
+{i:"🚀",c:"motion",n:["Balloon rocket","صاروخ البالون"],
+ t:["A blown-up balloon taped to a straw on a long string.","بالون منفوخ مثبت على ماصّة تمر في خيط طويل."],
+ l:["Let it go: the air rushes out backwards and the balloon zooms forwards!","عند إفلاته يندفع الهواء للخلف وينطلق البالون للأمام!"],
+ a:["I push the air back… and the air pushes me forward.","أدفع الهواء للخلف… فيدفعني الهواء للأمام."],
+ o:[["Action & reaction (Newton's 3rd law)","الفعل ورد الفعل (قانون نيوتن الثالث)"],C.refl,C.mag,C.stat],
+ w:["For every action there is an equal and opposite reaction. The balloon pushes air backwards, so the air pushes the balloon forwards.","لكل فعل رد فعل مساوٍ له في المقدار ومعاكس له في الاتجاه. يدفع البالون الهواء للخلف، فيدفع الهواء البالون للأمام."]},
+{i:"🪶",c:"motion",n:["Feather & coin","ريشة وقطعة نقود"],
+ t:["A light feather and a heavy coin.","ريشة خفيفة وقطعة نقود ثقيلة."],
+ l:["Dropped together, the feather floats down slowly… but in a tube with no air, they land together!","عند إسقاطهما معاً تهبط الريشة ببطء… لكن في أنبوب بلا هواء يصلان معاً!"],
+ a:["Without air in the way, I pull heavy and light things down the same way.","بلا هواء يعيق الطريق… أسحب الثقيل والخفيف بالطريقة نفسها."],
+ o:[["Gravity & air resistance","الجاذبية ومقاومة الهواء"],C.refl,C.mag,C.stat],
+ w:["Gravity makes all objects fall with the same acceleration. In air, air resistance slows the light feather much more than the coin.","الجاذبية تجعل كل الأجسام تسقط بالتسارع نفسه، لكن مقاومة الهواء تبطئ الريشة الخفيفة أكثر بكثير من القطعة."]},
+/* ---------- REFLECTION ---------- */
+{i:"🪞",c:"reflect",n:["Plane mirror","مرآة مستوية"],
+ t:["A flat, smooth, shiny piece of glass.","قطعة زجاج مسطحة ملساء ولامعة."],
+ l:["Raise your right hand: your image raises its left! Words on a T-shirt look backwards.","ارفعي يدك اليمنى فترفع صورتك يدها اليسرى! والكلمات على القميص تبدو معكوسة."],
+ a:["I copy you perfectly… but I secretly swap your left and right.","أنسخك تماماً… لكنني أبدّل يمينك ويسارك سرّاً."],
+ o:[["Reflection in a plane mirror","الانعكاس في المرآة المستوية"],C.fric,C.mag,C.snd],
+ w:["A plane mirror reflects light to make an upright image the same size as you. The image is reversed left to right (lateral inversion).","المرآة المستوية تعكس الضوء فتكوّن صورة معتدلة بحجم الجسم نفسه، لكنها معكوسة جانبياً (اليمين يصبح يساراً)."]},
+{i:"🔦",c:"reflect",n:["Laser & protractor","ليزر ومنقلة"],
+ t:["A small laser pointer, a mirror and a protractor.","مؤشر ليزر صغير، ومرآة، ومنقلة."],
+ l:["The beam hits the mirror at 30° and bounces off at exactly 30°.","يسقط الشعاع على المرآة بزاوية 30° وينعكس بزاوية 30° تماماً."],
+ a:["However you throw light at me, I send it back at the same angle.","مهما رميتِ الضوء نحوي… أردّه بالزاوية نفسها."],
+ o:[["Law of reflection","قانون الانعكاس"],C.spd,C.fric,C.stat],
+ w:["The law of reflection: ⟦angle of incidence = angle of reflection⟧. Both angles are measured from the normal (the line at 90° to the mirror).","قانون الانعكاس: ⟦زاوية السقوط = زاوية الانعكاس⟧، وتقاس الزاويتان من العمود المقام على المرآة."]},
+{i:"🔭",c:"reflect",n:["Periscope","البيريسكوب (المِنظار)"],
+ t:["A long tube with a window at the top and another at the bottom.","أنبوب طويل له فتحة في الأعلى وأخرى في الأسفل."],
+ l:["Hide behind a wall and look in: you can see over the wall!","اختبئي خلف جدار وانظري فيه: ترين ما فوق الجدار!"],
+ a:["Two mirrors inside me help you see over walls.","مرآتان بداخلي تساعدانك على الرؤية فوق الجدران."],
+ o:[["Reflection by two mirrors","الانعكاس في مرآتين"],C.fric,C.mag,C.spd],
+ w:["A periscope has two mirrors tilted at 45°. Light reflects off the top mirror, then off the bottom mirror, and into your eye.","في البيريسكوب مرآتان مائلتان بزاوية 45°؛ ينعكس الضوء عن المرآة العليا ثم عن السفلى ثم يدخل عينك."]},
+{i:"🔮",c:"reflect",n:["Kaleidoscope","المِشكال (الكاليدوسكوب)"],
+ t:["A tube you can twist, with little beads rattling inside.","أنبوب يمكن تدويره، فيه خرزات صغيرة تخشخش."],
+ l:["Look inside: a beautiful star pattern that changes as you turn it!","انظري داخله: نمط نجمي جميل يتغير كلما أدرتِه!"],
+ a:["A few beads become hundreds… I make copies of copies.","بضع خرزات تصبح مئات… أصنع نسخاً من النسخ."],
+ o:[["Many reflections between mirrors","الانعكاسات المتعددة بين المرايا"],C.fric,C.mag,C.grav],
+ w:["Inside are mirrors set at an angle. Light reflects between them many times, making many images that form a pattern.","بداخله مرايا موضوعة بزاوية، ينعكس الضوء بينها مرات كثيرة فتتكوّن صور عديدة تشكّل نمطاً جميلاً."]},
+{i:"🥄",c:"reflect",n:["Shiny spoon (concave mirror)","ملعقة لامعة (مرآة مقعّرة)"],
+ t:["A shiny metal spoon, curved inwards like a cave.","ملعقة معدنية لامعة مقعّرة للداخل مثل الكهف."],
+ l:["Look into the inside of the spoon: your face is upside down!","انظري إلى باطن الملعقة: وجهك مقلوب!"],
+ a:["My curve is like a cave… look at me from far away and I turn you upside down!","انحنائي مثل الكهف… انظري إليّ من بعيد فأقلبك رأساً على عقب!"],
+ o:[["Reflection in a concave mirror","الانعكاس في مرآة مقعّرة"],C.fric,C.stat,C.spd],
+ w:["The inside of a spoon is a concave (curved-in) mirror. It brings reflected rays together, so a far object looks upside down.","باطن الملعقة مرآة مقعّرة تجمع الأشعة المنعكسة، لذلك تبدو الأجسام البعيدة مقلوبة."]},
+{i:"🚘",c:"reflect",n:["Car side mirror (convex)","مرآة السيارة الجانبية (محدّبة)"],
+ t:["A mirror that bulges outwards, like the back of a spoon.","مرآة منتفخة للخارج مثل ظهر الملعقة."],
+ l:["It shows a wide view of the road, but cars look smaller and further away.","تُظهر مساحة واسعة من الطريق، لكن السيارات تبدو أصغر وأبعد."],
+ a:["I show you more of the world… by making everything smaller.","أريك جزءاً أكبر من العالم… بتصغير كل شيء."],
+ o:[["Reflection in a convex mirror","الانعكاس في مرآة محدّبة"],C.fric,C.mag,C.snd],
+ w:["A convex (curved-out) mirror spreads reflected light out. It makes small, upright images and gives a wide view, so drivers see more of the road.","المرآة المحدّبة تفرّق الضوء المنعكس، فتعطي صوراً صغيرة معتدلة ومجال رؤية واسعاً، فيرى السائق مساحة أكبر من الطريق."]},
+{i:"🚲",c:"reflect",n:["Bicycle reflector","عاكس الدرّاجة"],
+ t:["A red plastic disc with tiny bumps on the back.","قرص بلاستيكي أحمر في ظهره نتوءات صغيرة."],
+ l:["At night, car lights hit it and it shines brightly back at the driver.","في الليل تسقط عليه أضواء السيارة فيلمع بقوة نحو السائق."],
+ a:["Shine your light at me… and I'll send it straight back to you.","سلّطي ضوءك عليّ… أردّه إليك مباشرة."],
+ o:[["Reflecting light back to its source","عكس الضوء نحو مصدره"],C.mag,C.fric,C.stat],
+ w:["The tiny bumps act like small mirrors at right angles. They reflect light straight back to where it came from, so drivers can see bikes at night.","النتوءات الصغيرة تعمل مثل مرايا صغيرة متعامدة، تعكس الضوء عائداً إلى مصدره، فيرى السائقون الدراجة ليلاً."]},
+{i:"👏",c:"reflect",n:["Clap & echo","التصفيق والصدى"],
+ t:["Two wooden blocks for clapping, near a big wall.","قطعتان خشبيتان للتصفيق قرب جدار كبير."],
+ l:["Clap once… and hear the clap again a moment later!","صفّقي مرة… فتسمعين التصفيق مرة أخرى بعد لحظة!"],
+ a:["I am your sound coming back to you after hitting a wall.","أنا صوتك وقد عاد إليك بعد أن اصطدم بالجدار."],
+ o:[["Echo (reflection of sound)","الصدى (انعكاس الصوت)"],C.mag,C.fric,C.stat],
+ w:["An echo is sound that reflects off a hard surface, like a wall or a cliff, and comes back to your ears.","الصدى صوت ينعكس عن سطح صلب مثل الجدار أو الجبل ويعود إلى أذنك."]},
+{i:"🧵",c:"reflect",n:["Optical fibre","الألياف الضوئية"],
+ t:["A thin, bendy thread of clear glass or plastic.","خيط رفيع مرن من الزجاج أو البلاستيك الشفاف."],
+ l:["Shine light in one end: it follows the bends and glows at the other end!","سلّطي ضوءاً على أحد طرفيه: يتبع الانحناءات ويضيء من الطرف الآخر!"],
+ a:["Light gets trapped inside me and bounces all the way to the end.","يُحبس الضوء بداخلي ويرتد طوال الطريق حتى النهاية."],
+ o:[["Total internal reflection","الانعكاس الكلي الداخلي"],C.fric,C.mag,C.snd],
+ w:["Light hits the inside wall of the fibre at a big angle and reflects completely back inside, again and again. This is how fibres carry light (and internet data!).","يسقط الضوء على الجدار الداخلي للألياف بزاوية كبيرة فينعكس كلياً إلى الداخل مرة بعد مرة، وهكذا تنقل الألياف الضوء (وبيانات الإنترنت!)."]},
+/* ---------- MORE BASICS ---------- */
+{i:"🧲",c:"em",n:["Magnet","مغناطيس"],
+ t:["A heavy piece of metal… some things jump onto it!","قطعة معدن ثقيلة… بعض الأشياء تقفز إليها!"],
+ l:["Paper clips and nails stick to it, but paper and plastic don't.","تلتصق بها مشابك الورق والمسامير، أما الورق والبلاستيك فلا."],
+ a:["I pull without hands, and I have two ends: North and South.","أجذب بلا أيدٍ… ولي طرفان: شمال وجنوب."],
+ o:[C.mag,C.refl,C.echo,C.fric],
+ w:["A magnet attracts materials like iron and steel. Like poles repel and unlike poles attract.","المغناطيس يجذب مواد مثل الحديد والفولاذ، والأقطاب المتشابهة تتنافر والمختلفة تتجاذب."]},
+{i:"🎈",c:"em",n:["Rubbed balloon","بالون مفروك"],
+ t:["A balloon that was rubbed on someone's hair.","بالون تم فركه بالشعر."],
+ l:["It sticks to the wall and makes hair stand up!","يلتصق بالجدار ويجعل الشعر يقف!"],
+ a:["Rub me on your hair… and I'll make it stand up to say hello!","افركيني بشعرك… وأجعله يقف ليحييني!"],
+ o:[C.stat,C.refl,C.spd,C.echo],
+ w:["Rubbing moves tiny charges (electrons) onto the balloon, so it becomes charged. Opposite charges attract, so it sticks.","الفرك ينقل شحنات صغيرة (إلكترونات) إلى البالون فيصبح مشحوناً، والشحنات المختلفة تتجاذب فيلتصق."]},
+{i:"💡",c:"em",n:["Battery & bulb","بطارية ومصباح"],
+ t:["A battery, some wires and a small bulb.","بطارية، وأسلاك، ومصباح صغير."],
+ l:["The bulb lights up only when the wires make a complete loop.","يضيء المصباح فقط عندما تصنع الأسلاك دائرة كاملة."],
+ a:["Close my circle and I'll light the room. Break it… and it's dark!","أغلقي دائرتي أضيء الغرفة… افتحيها فيحل الظلام!"],
+ o:[["Closed electric circuit","الدائرة الكهربائية المغلقة"],C.refl,C.fric,C.echo],
+ w:["Electric current can only flow around a complete (closed) circuit. When the loop is broken, the current stops and the bulb goes out.","لا يسري التيار الكهربائي إلا في دائرة مغلقة، وعندما تنقطع الدائرة يتوقف التيار وينطفئ المصباح."]},
+{i:"🔺",c:"wave",n:["Glass prism","منشور زجاجي"],
+ t:["A smooth glass triangle.","قطعة زجاج ملساء على شكل مثلث."],
+ l:["Shine white light through it: a rainbow appears on the wall!","سلّطي عليه ضوءاً أبيض: يظهر قوس قزح على الجدار!"],
+ a:["Give me white light… and I'll give you seven colours.","أعطيني ضوءاً أبيض… أردّه لك سبعة ألوان."],
+ o:[["Splitting white light into colours","تحلّل الضوء الأبيض إلى ألوان"],C.mag,C.fric,C.echo],
+ w:["White light is a mix of colours. The glass bends each colour by a different amount, so they spread out into a rainbow.","الضوء الأبيض خليط من الألوان، والزجاج يكسر كل لون بمقدار مختلف فتنفصل الألوان مثل قوس قزح."]},
+{i:"🔍",c:"wave",n:["Magnifying glass","عدسة مكبّرة"],
+ t:["Round glass, thick in the middle and thin at the edges.","زجاج دائري سميك في الوسط ورقيق عند الأطراف."],
+ l:["Tiny letters look big through it.","الحروف الصغيرة تبدو كبيرة من خلاله."],
+ a:["I turn ants into giants… by bending light.","أحوّل النمل إلى عمالقة… بثني الضوء."],
+ o:[["Refraction by a convex lens","انكسار الضوء في عدسة محدّبة"],C.echo,C.mag,C.fric],
+ w:["A convex lens bends (refracts) light rays towards each other, so the object looks bigger.","العدسة المحدّبة تكسر أشعة الضوء وتجمعها، فيبدو الجسم أكبر."]},
+{i:"🎵",c:"wave",n:["Tuning fork","شوكة رنّانة"],
+ t:["A metal fork that tingles after you tap it.","شوكة معدنية ترتجف بعد أن تطرقيها."],
+ l:["Tap it and dip it in water: the water splashes!","اطرقيها ثم اغمسيها في الماء: يتطاير الماء!"],
+ a:["Tap me once and I'll sing one note… while I shake!","اطرقيني مرة… أغني نغمة واحدة وأنا أهتز!"],
+ o:[["Sound is made by vibrations","الصوت ينتج عن الاهتزاز"],C.refl,C.mag,C.fric],
+ w:["Sound is made when objects vibrate. The fork vibrates quickly and pushes the air, making a sound wave.","ينتج الصوت عن اهتزاز الأجسام؛ تهتز الشوكة بسرعة فتدفع الهواء وتكوّن موجة صوتية."]},
+{i:"🌀",c:"mech",n:["Spring","نابض (زنبرك)"],
+ t:["A coiled metal wire. Squeeze it and it pushes back.","سلك معدني ملفوف… اضغطيه فيدفع يدك."],
+ l:["Hang more weights: it stretches more, then goes back when you remove them.","علّقي أثقالاً أكثر فيستطيل أكثر، ثم يعود عند إزالتها."],
+ a:["Pull me harder and I stretch more… then I spring back!","اسحبيني أكثر أستطيل أكثر… ثم أعود!"],
+ o:[["Elasticity (Hooke's law)","المرونة (قانون هوك)"],C.refl,C.echo,C.stat],
+ w:["A spring is elastic: it returns to its shape. The bigger the force, the bigger the stretch: ⟦F = k × x⟧.","النابض مرن يعود إلى شكله، وكلما زادت القوة زادت الاستطالة: ⟦F = k × x⟧."]},
+{i:"🕰️",c:"mech",n:["Pendulum","بندول"],
+ t:["A string with a small heavy ball at the end.","خيط في طرفه كرة صغيرة ثقيلة."],
+ l:["Let it go: it swings back and forth like a clock. A shorter string swings faster.","اتركيه فيتأرجح ذهاباً وإياباً مثل الساعة، والخيط الأقصر يتأرجح أسرع."],
+ a:["Gravity pulls me down… but I keep coming back like a clock.","الجاذبية تسحبني للأسفل… لكنني أعود كل مرة مثل الساعة."],
+ o:[["Gravity & swinging motion","الجاذبية والحركة التذبذبية"],C.refl,C.mag,C.stat],
+ w:["Gravity pulls the ball back to the middle, and it keeps swinging past to the other side. The time for one swing depends on the string's length.","الجاذبية تسحب الكرة نحو المنتصف فتتجاوزه إلى الجهة الأخرى، وزمن التأرجحة الواحدة يعتمد على طول الخيط."]},
+{i:"🎱",c:"mech",n:["Newton's cradle","مهد نيوتن"],
+ t:["Five shiny metal balls hanging in a row.","خمس كرات معدنية لامعة معلّقة في صف."],
+ l:["Lift one ball and let go: one ball flies out from the other end!","ارفعي كرة واحدة وأفلتيها: تنطلق كرة واحدة من الطرف الآخر!"],
+ a:["What I receive, I pass on… all the way down the line!","ما أستلمه أسلّمه… على طول الصف!"],
+ o:[["Transfer of energy & momentum","انتقال الطاقة والزخم"],C.refl,C.stat,C.mag],
+ w:["When the first ball hits, its energy and momentum pass through the balls to the last one, which swings out.","عندما تصطدم الكرة الأولى تنتقل طاقتها وزخمها عبر الكرات إلى الكرة الأخيرة فتنطلق."]},
+{i:"🥚",c:"therm",n:["Egg in salty water","بيضة في ماء مالح"],
+ t:["An egg and two glasses of water: one is very salty.","بيضة وكأسان من الماء، أحدهما شديد الملوحة."],
+ l:["In tap water the egg sinks. In salty water it floats!","في ماء الصنبور تغوص البيضة، وفي الماء المالح تطفو!"],
+ a:["I'm the same egg in both glasses… only the water changed!","أنا البيضة نفسها في الكأسين… الماء وحده تغيّر!"],
+ o:[["Density & floating","الكثافة والطفو"],C.refl,C.mag,C.echo],
+ w:["Salt makes the water denser than the egg, so the water pushes up harder and the egg floats.","الملح يجعل كثافة الماء أكبر من كثافة البيضة، فيدفعها الماء للأعلى بقوة أكبر فتطفو."]},
+{i:"🧊",c:"therm",n:["Ice on metal & wood","ثلج على معدن وخشب"],
+ t:["The metal block feels cold and the wooden block feels warm… in the same room!","قطعة المعدن تبدو باردة وقطعة الخشب تبدو دافئة… في الغرفة نفسها!"],
+ l:["Ice on the metal melts much faster than ice on the wood.","الثلج على المعدن يذوب أسرع بكثير من الثلج على الخشب."],
+ a:["I carry heat quickly… that's how I trick your hand!","أنقل الحرارة بسرعة… ولهذا أخدع يدك!"],
+ o:[["Heat conduction","التوصيل الحراري"],C.refl,C.mag,C.echo],
+ w:["Metal is a good conductor of heat and wood is a poor one. The metal moves heat into the ice quickly, so it melts faster.","المعدن موصل جيد للحرارة والخشب موصل رديء، فينقل المعدن الحرارة إلى الثلج بسرعة فيذوب أسرع."]},
+{i:"🌡️",c:"therm",n:["Thermometer","ميزان الحرارة"],
+ t:["A thin glass tube with a coloured liquid inside.","أنبوب زجاجي رفيع بداخله سائل ملوّن."],
+ l:["Hold the bulb in your hand: the liquid slowly rises.","أمسكي طرفه المنتفخ بيدك: يرتفع السائل ببطء."],
+ a:["Warm me and I grow… cool me and I shrink.","دفّئيني فأتمدد… برّديني فأنكمش."],
+ o:[["Thermal expansion","التمدد الحراري"],C.refl,C.mag,C.fric],
+ w:["Most liquids expand when they get warmer. The liquid takes up more space, so it rises up the thin tube.","معظم السوائل تتمدد عند تسخينها، فيشغل السائل حيزاً أكبر ويرتفع في الأنبوب الرفيع."]}
 ];
 
-/* ===================== UI TEXT ===================== */
-const T = {
- en:{title:"Mystery Physics Box",subtitle:"Touch • Observe • Guess the physics!",langBtn:"عربي",howTitle:"How to play",
-  rules:["Mystery objects are hidden inside covered boxes.","On your turn, pick a box. The <b>AI robot</b> gives you a mysterious clue first.","Open the <b>touch</b> and <b>look</b> clues, then guess the physics concept.","Correct answer = <b>1 point</b>.","Explain the scientific reason = <b>2 bonus points</b> (the teacher decides)."],
-  teamsLbl:"Number of teams",boxesLbl:"Number of boxes",timerLbl:"Time per box",off:"Off",sec:"s",start:"Start the game ▶",
-  team:"Team",turn:"Turn:",aiLbl:"AI CLUE",touchBtn:"✋ Touch clue",lookBtn:"👀 Look clue",touchH:"✋ Touch",lookH:"👀 Look",
-  question:"Which physics concept is hidden in this box?",correct:"Correct! +1",wrong:"Not quite!",timeUp:"Time's up!",itWas:"It was:",
-  bonusTitle:"Bonus: explain the scientific reason (+2)",showWhy:"Show the answer",bonusYes:"✔ Explained well +2",bonusNo:"✖ No bonus",
-  nextTeam:"Next ▶",finishNow:"Finish game",again:"Play again",winner:"wins!",tie:"It's a tie!",box:"Box",
-  foot:"Made for the classroom smartboard. Works on any screen."},
- ar:{title:"صندوق الفيزياء الغامض",subtitle:"المس • لاحظ • خمّن المفهوم!",langBtn:"English",howTitle:"طريقة اللعب",
-  rules:["أشياء غامضة مخبأة داخل صناديق مغلقة.","في دورك اختر صندوقًا، و<b>الروبوت الذكي</b> يعطيك تلميحًا غامضًا أولًا.","افتح تلميح <b>اللمس</b> وتلميح <b>الملاحظة</b> ثم خمّن المفهوم الفيزيائي.","الإجابة الصحيحة = <b>نقطة واحدة</b>.","شرح السبب العلمي = <b>نقطتان إضافيتان</b> (تقرّرها المعلمة)."],
-  teamsLbl:"عدد الفرق",boxesLbl:"عدد الصناديق",timerLbl:"الوقت لكل صندوق",off:"بدون",sec:"ث",start:"ابدأ اللعب ▶",
-  team:"فريق",turn:"الدور على:",aiLbl:"تلميح الذكاء الاصطناعي",touchBtn:"✋ تلميح اللمس",lookBtn:"👀 تلميح الملاحظة",touchH:"✋ اللمس",lookH:"👀 الملاحظة",
-  question:"ما المفهوم الفيزيائي المخبأ في هذا الصندوق؟",correct:"إجابة صحيحة! +1",wrong:"للأسف لا!",timeUp:"انتهى الوقت!",itWas:"الجواب:",
-  bonusTitle:"سؤال إضافي: اشرح السبب العلمي (+2)",showWhy:"أظهر الإجابة",bonusYes:"✔ شرح صحيح +2",bonusNo:"✖ بدون نقاط",
-  nextTeam:"التالي ▶",finishNow:"إنهاء اللعبة",again:"العب مرة ثانية",winner:"هو الفائز!",tie:"تعادل!",box:"صندوق",
-  foot:"مصممة لشاشة الصف الذكية، وتشتغل على أي شاشة."}
+/* ============================== UI TEXT ============================== */
+const U={
+ title:["Mystery Physics Box","صندوق الفيزياء الغامض"],
+ tag:["Observe · Touch · Decode the physics","لاحظي · المسي · اكتشفي الفيزياء"],
+ launch:["Enter the lab","ادخلي المختبر"],
+ ribbon:["Student project","مشروع طالبة"],
+ howT:["How to play","طريقة اللعب"],
+ rules:[
+  ["📦","Every glowing box hides a real physics object.","كل صندوق مضيء يخفي جسماً فيزيائياً حقيقياً."],
+  ["🤖","Before you guess, the AI <b>NOVA</b> whispers a mysterious riddle.","قبل التخمين، تهمس <b>نوفا</b> (الذكاء الاصطناعي) بلغز غامض."],
+  ["✋","Flip the <b>Touch</b> and <b>Observe</b> clue cards, then pick the concept.","اقلبي بطاقتي <b>اللمس</b> و<b>الملاحظة</b>، ثم اختاري المفهوم."],
+  ["✅","Correct concept = <b>+1 point</b>.","المفهوم الصحيح = <b>نقطة واحدة</b>."],
+  ["💡","Explain the scientific reason = <b>+2 bonus</b> (the teacher decides).","شرح السبب العلمي = <b>نقطتان إضافيتان</b> (تقرّرها المعلمة)."]
+ ],
+ playersT:["Players","المتسابقات"],
+ modeInd:["Individual","فردي"], modeTeam:["Teams of 3","فرق ثلاثية"],
+ nInd:["Number of players","عدد اللاعبات"], nTeam:["Number of teams","عدد الفرق"],
+ namesL:["Names (optional)","الأسماء (اختياري)"], member:["Member","العضوة"],
+ gameT:["Game","اللعبة"], topicL:["Topic","الموضوع"], boxesL:["Number of boxes","عدد الصناديق"], timerL:["Time per box","الوقت لكل صندوق"],
+ off:["Off","بدون"], sec:["s","ث"],
+ stealL:["Steal rule","قاعدة الخطف"], stealD:["After a wrong answer, the next player or team can steal for +1.","بعد الإجابة الخاطئة يمكن للاعبة أو الفريق التالي الخطف مقابل نقطة."],
+ on:["On","مفعّلة"], offS:["Off","معطّلة"],
+ start:["Launch the game","ابدئي اللعبة"],
+ keys:["Keys: 1–4 answer · T touch · L look · A show answer · Enter next · F fullscreen","المفاتيح: 1–4 للإجابة · T اللمس · L الملاحظة · A إظهار الإجابة · Enter التالي · F ملء الشاشة"],
+ turnNow:["Now playing","الدور الآن"], pickBox:["Pick a mystery box!","اختاري صندوقاً غامضاً!"], left:["boxes left","صناديق متبقية"],
+ lbT:["Leaderboard","لوحة الصدارة"], finish:["Finish game","إنهاء اللعبة"], finishSure:["Tap again to finish","اضغطي مرة أخرى للإنهاء"],
+ aiSub:["AI clue","تلميح الذكاء الاصطناعي"],
+ touch:["Touch clue","تلميح اللمس"], look:["Observe clue","تلميح الملاحظة"], tap:["Tap to flip","اضغطي لقلب البطاقة"],
+ question:["Which physics concept is hidden in this box?","ما المفهوم الفيزيائي المخبأ في هذا الصندوق؟"],
+ correct:["Correct! +1","إجابة صحيحة! <bdi dir='ltr'>+1</bdi>"], stole:["Stolen! +1","خطف ناجح! <bdi dir='ltr'>+1</bdi>"], wrong:["Not quite!","إجابة غير صحيحة!"], timeUp:["Time's up!","انتهى الوقت!"],
+ theAns:["Answer:","الإجابة:"],
+ stealT:["Steal chance!","فرصة للخطف!"], stealSub:["choose another answer for +1","اختاري إجابة أخرى مقابل نقطة"], skip:["Skip","تخطٍّ"],
+ bonusT:["Bonus: explain the scientific reason (+2)","سؤال إضافي: اشرحي السبب العلمي (<bdi dir='ltr'>+2</bdi>)"],
+ showWhy:["Show answer","إظهار الإجابة"], yes:["Explained well +2","شرح صحيح <bdi dir='ltr'>+2</bdi>"], no:["No bonus","بدون نقاط إضافية"],
+ gotBonus:["Bonus +2 awarded!","تمت إضافة نقطتين!"], noBonus:["No bonus this time","لا نقاط إضافية هذه المرة"],
+ next:["Next","التالي"], combo:["COMBO","سلسلة"], streak:["in a row","متتالية"],
+ drum:["And first place goes to…","والمركز الأول من نصيب…"], tie:["It's a tie!","تعادل!"], champ:["Champion of the Mystery Box","بطل صندوق الفيزياء الغامض"],
+ champs:["Champions of the Mystery Box","أبطال صندوق الفيزياء الغامض"],
+ again:["Play again","جولة جديدة"], newSetup:["New setup","إعداد جديد"], bestStreak:["Best streak","أطول سلسلة"],
+ fs:["Fullscreen (F)","ملء الشاشة (F)"], sound:["Sound on/off","تشغيل/إيقاف الصوت"], back:["Back to board (Esc)","العودة إلى اللوحة (Esc)"]
 };
-const TEAM_COLORS=["var(--t1)","var(--t2)","var(--t3)","var(--t4)"];
-const DEF_NAMES={en:["Red Team","Blue Team","Purple Team","Green Team"],ar:["الفريق الأحمر","الفريق الأزرق","الفريق البنفسجي","الفريق الأخضر"]};
+const CREDIT={
+ en:'<span class="cl">Umm Al Emarat School <span class="dash">—</span> By student: <b>Fatima Salem Al Kaabi</b> <span class="dash">—</span> Grade 10A1</span>',
+ ar:'<span class="cl" lang="ar" dir="rtl" style="font-family:var(--fa)">مدرسة أم الإمارات <span class="dash">—</span> عمل الطالبة: <b>فاطمة سالم الكعبي</b> <span class="dash">—</span> الصف <bdi>10A1</bdi></span>'
+};
+const COLORS=["#34e7ff","#ff4fd8","#ffcc4d","#3cf2a5","#a78bfa","#ff8a5b","#60a5fa","#f472b6"];
+const AVS=["⚛️","🚀","🌙","☄️","🔭","🧪","🛰️","🌟"];
+const TEAM_DEF=[["Team Photon","فريق الفوتون"],["Team Quark","فريق الكوارك"],["Team Comet","فريق المذنّب"],["Team Pulsar","فريق النجم النابض"],["Team Neutrino","فريق النيوترينو"],["Team Plasma","فريق البلازما"]];
+const indDef=i=>["Player "+(i+1),"اللاعبة "+(i+1)];
 
-/* ===================== STATE ===================== */
-let lang="en", cfg={teams:2,boxes:8,timer:60}, names=[...DEF_NAMES.en];
-let G=null, cur=null, tHandle=null, typeHandle=null;
+/* ============================== STATE ============================== */
+let lang="both", muted=false;
+const cfg={mode:"team",nInd:4,nTeam:4,topic:"sr",boxes:12,timer:60,steal:false};
+let indNames=Array(8).fill(""), teams=Array.from({length:6},()=>({name:"",m:["","",""]}));
+try{
+  const s=JSON.parse(localStorage.getItem("mpb3")||"null");
+  if(s){
+    if(s.cfg) for(const k in cfg) if(k in s.cfg && typeof s.cfg[k]===typeof cfg[k]) cfg[k]=s.cfg[k];
+    if(["en","ar","both"].includes(s.lang)) lang=s.lang;
+    muted=!!s.muted;
+    if(Array.isArray(s.indNames)) s.indNames.slice(0,8).forEach((v,i)=>indNames[i]=String(v||""));
+    if(Array.isArray(s.teams)) s.teams.slice(0,6).forEach((t,i)=>{if(t){teams[i].name=String(t.name||"");[0,1,2].forEach(j=>teams[i].m[j]=String((t.m||[])[j]||""))}});
+  }
+}catch(e){}
+if(!FILTERS.some(f=>f.id===cfg.topic)) cfg.topic="sr";
+cfg.nInd=Math.min(8,Math.max(2,cfg.nInd|0)); cfg.nTeam=Math.min(6,Math.max(2,cfg.nTeam|0));
+function save(){try{localStorage.setItem("mpb3",JSON.stringify({cfg,lang,muted,indNames,teams}))}catch(e){}}
+
+let G=null, cur=null, opening=false;
 const $=id=>document.getElementById(id);
-const t=k=>T[lang][k];
-
-function applyLang(){
-  document.documentElement.lang=lang; document.documentElement.dir=lang==="ar"?"rtl":"ltr";
-  document.querySelectorAll("[data-t]").forEach(el=>el.innerHTML=t(el.dataset.t));
-  $("rules").innerHTML=t("rules").map(r=>`<li>${r}</li>`).join("");
-  renderSetup(); if(G){renderBoard()}
-}
-function toggleLang(){
-  const old=lang; lang=lang==="en"?"ar":"en";
-  names=names.map((n,i)=>n===DEF_NAMES[old][i]?DEF_NAMES[lang][i]:n);
-  applyLang();
-}
-function opts(id,vals,key,fmt){
-  $(id).innerHTML=vals.map(v=>`<button class="opt ${cfg[key]===v?"sel":""}" onclick="cfg.${key}=${v};renderSetup()">${fmt(v)}</button>`).join("");
-}
-function renderSetup(){
-  opts("optTeams",[1,2,3,4],"teams",v=>v);
-  opts("optBoxes",[6,8,12],"boxes",v=>v);
-  opts("optTimer",[0,30,60,90],"timer",v=>v?v+t("sec"):t("off"));
-  $("teamNames").innerHTML=Array.from({length:cfg.teams},(_,i)=>
-    `<input style="border-color:${TEAM_COLORS[i]}" value="${names[i]}" oninput="names[${i}]=this.value">`).join("");
-}
-function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));window.scrollTo(0,0)}
-
-/* ===================== GAME ===================== */
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fm=s=>s.replace(/⟦(.+?)⟧/g,'<bdi class="eq">$1</bdi>');
+const strip=s=>s.replace(/[⟦⟧]/g,"");
+function dual(en,ar){return `<span class="l-en">${fm(en)}</span><span class="l-ar" lang="ar" dir="rtl">${fm(ar)}</span>`}
+function L(a){return lang==="both"?dual(a[0],a[1]):fm(lang==="ar"?a[1]:a[0])}
+function Li(a){return lang==="both"?`${a[0]}<span class="sep">·</span><span class="ar-i" lang="ar" dir="rtl">${a[1]}</span>`:(lang==="ar"?a[1]:a[0])}
+function P(a){return lang==="both"?a[0]+" / "+a[1]:(lang==="ar"?a[1]:a[0])}
+const tx=k=>L(U[k]), txi=k=>Li(U[k]), tp=k=>P(U[k]);
+function pName(p,stack){return p.name?`<span class="one" dir="auto">${esc(p.name)}</span>`:(stack?L(p.def):Li(p.def))}
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
-function startGame(){
-  audio();
-  const picks=shuffle(ITEMS).slice(0,cfg.boxes);
-  G={teams:Array.from({length:cfg.teams},(_,i)=>({name:names[i]||DEF_NAMES[lang][i],score:0,color:TEAM_COLORS[i]})),
-     boxes:picks.map(it=>({it,done:false,by:-1,order:shuffle([0,1,2,3])})),turn:0};
-  renderBoard(); show("sBoard");
-}
-function renderBoard(){
-  $("scores").innerHTML=G.teams.map((tm,i)=>`<div class="sc ${i===G.turn?"turn":""}"><span class="dot" style="background:${tm.color}"></span><span class="n">${esc(tm.name)}</span><span class="p">${tm.score}</span></div>`).join("");
-  const tm=G.teams[G.turn];
-  $("turnLbl").innerHTML=`${t("turn")} <span style="color:${tm.color}">${esc(tm.name)}</span>`;
-  $("board").innerHTML=G.boxes.map((b,i)=>`<div class="box ${b.done?"done":""}" onclick="openBox(${i})">
-    ${b.by>=0?`<span class="who" style="background:${G.teams[b.by].color}"></span>`:""}
-    <div class="lid"><i>${b.done?b.it.icon:i+1}</i><em>${b.done?b.it.name[lang]:"?"}</em></div></div>`).join("");
-}
-function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function pool(id){const f=FILTERS.find(x=>x.id===id)||FILTERS[0];return ITEMS.filter(it=>!f.cats||f.cats.includes(it.c))}
+function chip(c){const k=CAT[c];return `<span class="chip" style="--cc2:${k.col}40;--cc3:${k.col}aa"><i>${k.ic}</i><span>${L(k.n)}</span></span>`}
+function membersHTML(p){return p.members.length?`<div class="members">${p.members.map(m=>`<span dir="auto">👩‍🔬 ${esc(m)}</span>`).join("")}</div>`:""}
 
-function openBox(i){
-  const b=G.boxes[i]; if(b.done) return;
-  cur={i,b,answered:false,bonusDone:false};
-  const tm=G.teams[G.turn];
-  $("pTitle").textContent=`${t("box")} ${i+1}`;
-  $("pTeam").innerHTML=`<span style="color:${tm.color}">●</span> ${esc(tm.name)}`;
-  const bb=$("bigBox"); bb.className="bigbox shake"; bb.innerHTML='<span class="q">?</span>';
-  $("objName").textContent="";
-  $("cTouch").className="clue"; $("cTouch").innerHTML=`<button onclick="clue('touch')">${t("touchBtn")}</button>`;
-  $("cLook").className="clue"; $("cLook").innerHTML=`<button onclick="clue('look')">${t("lookBtn")}</button>`;
-  $("choices").innerHTML=b.order.map(k=>`<button class="ch" data-k="${k}" onclick="answer(${k})">${b.it.choices[k][lang]}</button>`).join("");
-  $("result").className="result"; $("why").className="why"; $("why").textContent=b.it.why[lang];
-  $("bonusBtns").style.display=""; $("nextBtn").classList.remove("on");
-  $("mPlay").classList.add("on"); $("mPlay").scrollTop=0;
-  typeAI(b.it.ai[lang]);
-  startTimer();
-  beep(220,.15); setTimeout(()=>beep(330,.15),140);
+/* ============================== LANGUAGE ============================== */
+function setLang(l){lang=l;save();sfx.click();applyLang()}
+function applyLang(){
+  const h=document.documentElement;
+  h.lang=lang==="ar"?"ar":"en"; h.dir=lang==="ar"?"rtl":"ltr";
+  document.body.classList.toggle("both",lang==="both");
+  document.querySelectorAll("[data-t]").forEach(el=>el.innerHTML=tx(el.dataset.t));
+  document.querySelectorAll("[data-ti]").forEach(el=>el.innerHTML=txi(el.dataset.ti));
+  document.querySelectorAll("[data-tt]").forEach(el=>{el.title=tp(el.dataset.tt);el.setAttribute("aria-label",tp(el.dataset.tt))});
+  document.querySelectorAll("#langSeg button").forEach(b=>b.classList.toggle("sel",b.dataset.l===lang));
+  document.title=tp("title");
+  const cr=`<span class="ribbon">✨ ${L(U.ribbon)}</span>`+(lang==="both"?CREDIT.en+CREDIT.ar:CREDIT[lang]);
+  $("credit1").innerHTML=cr; $("credit2").innerHTML=cr;
+  $("rules").innerHTML=U.rules.map((r,i)=>`<div class="rc" style="animation-delay:${i*70}ms"><div class="ri">${r[0]}</div>${L([r[1],r[2]])}</div>`).join("");
+  renderSetup(); renderSnd();
+  if(G){renderBoard(); if(cur) renderPlay(false); if($("sEnd").classList.contains("on")) renderEnd(false)}
 }
-function typeAI(text){
-  clearInterval(typeHandle); const el=$("aiText"); el.textContent=""; el.classList.add("cur");
-  let k=0; typeHandle=setInterval(()=>{el.textContent=text.slice(0,++k); if(k%3===0) beep(900+Math.random()*300,.02,.03);
-    if(k>=text.length){clearInterval(typeHandle);el.classList.remove("cur")}},38);
+
+/* ============================== SETUP ============================== */
+function setCfg(k,v){cfg[k]=v;sfx.click();renderSetup()}
+function renderSetup(){
+  const isT=cfg.mode==="team", n=isT?cfg.nTeam:cfg.nInd;
+  $("modeSeg").innerHTML=[["ind","modeInd","👤"],["team","modeTeam","👥"]].map(([v,k,ic])=>
+    `<button class="${cfg.mode===v?"sel":""}" onclick="setCfg('mode','${v}')"><i>${ic}</i><span>${tx(k)}</span></button>`).join("");
+  $("countLbl").innerHTML=txi(isT?"nTeam":"nInd");
+  const range=isT?[2,3,4,5,6]:[2,3,4,5,6,7,8], key=isT?"nTeam":"nInd";
+  $("countRow").innerHTML=range.map(v=>`<button class="opt ${v===n?"sel":""}" onclick="setCfg('${key}',${v})">${v}</button>`).join("");
+  if(!isT){
+    $("names").innerHTML=`<div class="names">`+Array.from({length:n},(_,i)=>
+      `<label class="nrow" style="--c:${COLORS[i]}"><span class="nav">${AVS[i]}</span><input dir="auto" maxlength="24" value="${esc(indNames[i])}" placeholder="${esc(lang==="ar"?indDef(i)[1]:indDef(i)[0])}" oninput="indNames[${i}]=this.value"></label>`).join("")+`</div>`;
+  }else{
+    $("names").innerHTML=`<div class="tcards">`+Array.from({length:n},(_,i)=>
+      `<div class="tcard" style="--c:${COLORS[i]}"><label class="nrow"><span class="nav">${AVS[i]}</span><input class="tn" dir="auto" maxlength="24" value="${esc(teams[i].name)}" placeholder="${esc(lang==="ar"?TEAM_DEF[i][1]:TEAM_DEF[i][0])}" oninput="teams[${i}].name=this.value"></label>
+       <div class="mems">${[0,1,2].map(j=>`<input dir="auto" maxlength="20" value="${esc(teams[i].m[j])}" placeholder="${esc(lang==="ar"?U.member[1]:U.member[0])} ${j+1}" oninput="teams[${i}].m[${j}]=this.value">`).join("")}</div></div>`).join("")+`</div>`;
+  }
+  $("topics").innerHTML=FILTERS.map(f=>`<button class="topic ${f.star?"star":""} ${cfg.topic===f.id?"sel":""}" onclick="setCfg('topic','${f.id}')"><i>${f.ic}</i><span>${L(f.n)}</span><em>${pool(f.id).length}</em></button>`).join("");
+  const avail=pool(cfg.topic).length;
+  const opts=[...new Set([6,8,12,16,20,avail])].filter(v=>v<=avail).sort((a,b)=>a-b);
+  if(!opts.includes(cfg.boxes)){const lower=opts.filter(v=>v<=cfg.boxes);cfg.boxes=lower.length?lower[lower.length-1]:opts[0]}
+  $("boxRow").innerHTML=opts.map(v=>`<button class="opt ${v===cfg.boxes?"sel":""}" onclick="setCfg('boxes',${v})">${v}</button>`).join("");
+  $("timerRow").innerHTML=[0,30,45,60,90].map(v=>`<button class="opt ${v===cfg.timer?"sel":""}" onclick="setCfg('timer',${v})">${v?v+(lang==="ar"?" ث":"s"):Li(U.off)}</button>`).join("");
+  $("stealBox").innerHTML=`<button class="switch ${cfg.steal?"on":""}" onclick="setCfg('steal',${!cfg.steal})"><i></i><span>${Li(cfg.steal?U.on:U.offS)}</span></button>`;
+}
+function toSetup(){ac();sfx.whoosh();show("sSetup")}
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));
+  window.scrollTo(0,0);
+}
+
+/* ============================== GAME ============================== */
+function startGame(){
+  ac(); save();
+  const isT=cfg.mode==="team", n=isT?cfg.nTeam:cfg.nInd;
+  const players=Array.from({length:n},(_,i)=>({
+    name:((isT?teams[i].name:indNames[i])||"").trim()||null,
+    def:isT?TEAM_DEF[i]:indDef(i),
+    members:isT?teams[i].m.map(s=>s.trim()).filter(Boolean):[],
+    color:COLORS[i], av:AVS[i], score:0, streak:0, best:0
+  }));
+  const picks=shuffle(pool(cfg.topic)).slice(0,cfg.boxes);
+  G={players,boxes:picks.map(it=>({it,done:false,by:-1,order:shuffle([0,1,2,3])})),turn:0};
+  cur=null; opening=false; clearEndTimers();
+  $("lb").innerHTML="";
+  show("sBoard"); renderBoard(true); sfx.start();
+}
+function renderBoard(intro){
+  if(!G) return;
+  const p=G.players[G.turn], left=G.boxes.filter(b=>!b.done).length;
+  const tb=$("turnbar"); tb.style.setProperty("--c",p.color); tb.style.setProperty("--cg",p.color+"55");
+  tb.innerHTML=`<div class="tav">${p.av}</div><div class="tinfo"><div class="tsmall">${txi("turnNow")}</div><div class="tname">${pName(p)}</div>${membersHTML(p)}</div>
+    ${p.streak>=2?`<span class="fire">🔥 ×${p.streak}</span>`:""}<div class="thint">👆 ${tx("pickBox")}</div><div class="tleft"><b>${left}</b>${tx("left")}</div>`;
+  const bd=$("board");
+  bd.innerHTML=G.boxes.map((b,i)=>{const c=CAT[b.it.c];
+    return `<button class="mbox ${b.done?"done":""}" style="--d:${i};--tc:${c.col};--tcg:${c.col}99;--tcs:${c.col}33" onclick="openBox(${i})" ${b.done?'tabindex="-1" aria-disabled="true"':""}>
+      <div class="mface"><span class="mnum">${String(i+1).padStart(2,"0")}</span>
+      ${b.done?`<span class="mico">${b.it.i}</span><span class="mname">${L(b.it.n)}</span>`:`<span class="mq">?</span>${chip(b.it.c)}`}
+      ${b.by>=0?`<span class="who" style="--c:${G.players[b.by].color}"></span>`:""}</div></button>`}).join("");
+  if(intro){bd.classList.add("intro");setTimeout(()=>bd.classList.remove("intro"),2200)}
+  renderLB();
+}
+function renderLB(){
+  const el=$("lb"), P=G.players, n=P.length, rowH=lang==="both"?66:56;
+  if(el.children.length!==n||el.dataset.lang!==lang){
+    el.innerHTML=P.map((p,i)=>`<div class="lbr" style="--c:${p.color}"><span class="rk"></span><span class="av">${p.av}</span><div class="nmw"><div class="nm"></div><div class="bar"><i></i></div></div><span class="pt">${p.score}</span></div>`).join("");
+    el.dataset.lang=lang;
+  }
+  const order=P.map((_,i)=>i).sort((a,b)=>P[b].score-P[a].score||a-b), max=Math.max(1,...P.map(p=>p.score));
+  order.forEach((pi,rank)=>{
+    const row=el.children[pi], p=P[pi];
+    row.style.transform=`translateY(${rank*rowH}px)`; row.style.height=(rowH-6)+"px";
+    row.classList.toggle("turn",pi===G.turn);
+    const r=rank>0&&p.score===P[order[rank-1]].score?row.dataset.r:rank+1; row.dataset.r=r;
+    row.querySelector(".rk").textContent=r==1?"🥇":r==2?"🥈":r==3?"🥉":r;
+    row.querySelector(".nm").innerHTML=pName(p,true)+(p.streak>=2?`<span class="fire">🔥×${p.streak}</span>`:"");
+    row.querySelector(".bar i").style.width=(p.score/max*100)+"%";
+    const pt=row.querySelector(".pt");
+    if(pt.textContent!==String(p.score)){pt.textContent=p.score;pt.classList.remove("bump");void pt.offsetWidth;pt.classList.add("bump")}
+  });
+  el.style.height=n*rowH+"px";
+}
+let finArm=0,finT=null;
+function finishAsk(){
+  const b=$("finBtn");
+  if(Date.now()-finArm<3000){finArm=0;clearTimeout(finT);b.classList.remove("armed");b.innerHTML=tx("finish");endGame();return}
+  finArm=Date.now(); b.innerHTML=tx("finishSure"); b.classList.add("armed"); sfx.click();
+  clearTimeout(finT); finT=setTimeout(()=>{b.classList.remove("armed");b.innerHTML=tx("finish")},3000);
+}
+
+/* ---------- play modal ---------- */
+function openBox(i){
+  if(!G||opening||cur) return;
+  const b=G.boxes[i]; if(!b||b.done) return;
+  opening=true; sfx.click();
+  const el=$("board").children[i]; if(el) el.classList.add("opening");
+  setTimeout(()=>{
+    opening=false;
+    cur={i,b,phase:"ask",wrong:[],scorer:-1,stealer:-1,touch:false,look:false,whyShown:false,bonusDone:false,bonusYes:false,timeout:false,outcome:"",tLeft:0,tTotal:0};
+    renderPlay(true);
+    document.body.classList.add("modal-open");
+    $("mPlay").classList.add("on"); $("mPlay").scrollTop=0;
+    typeAI(true); startTimer(cfg.timer); sfx.whoosh();
+    if(el) el.classList.remove("opening");
+  },280);
+}
+function renderPlay(first){
+  const b=cur.b, it=b.it, P=G.players, p=P[G.turn], done=cur.phase==="done", c=CAT[it.c];
+  $("pNo").textContent="#"+String(cur.i+1).padStart(2,"0");
+  $("pTopic").innerHTML=chip(it.c);
+  const w=$("pWho"); w.style.setProperty("--c",p.color); w.style.setProperty("--cg",p.color+"55");
+  w.innerHTML=`<div class="tav sm">${p.av}</div><div class="tinfo"><div class="tname sm">${pName(p)}</div>${membersHTML(p)}</div>`;
+  const sp=$("spec"); sp.style.setProperty("--tc",c.col); sp.style.setProperty("--tcg",c.col+"66");
+  if(first){sp.className="specimen";$("crItem").textContent=it.i;$("sparks").innerHTML=""}
+  $("objName").innerHTML=done?L(it.n):"";
+  $("hname").innerHTML=`<span class="live"></span>NOVA<span class="hsub">${Li(U.aiSub)}</span>`;
+  if(!first) typeAI(false);
+  renderClues(first);
+  renderSteal();
+  $("qline").innerHTML=tx("question");
+  $("choices").innerHTML=b.order.map((k,pos)=>{
+    let cls="ch"; const isW=cur.wrong.includes(k);
+    if(done) cls+=k===0?" right":isW?" wrong":" dim"; else if(isW) cls+=" wrong";
+    return `<button class="${cls}" data-k="${k}" onclick="answer(${k})" ${done||isW?"disabled":""}><span class="num">${pos+1}</span><span class="ct">${L(it.o[k])}</span></button>`}).join("");
+  $("backBtn").style.display=cur.phase==="ask"&&!cur.wrong.length?"":"none";
+  renderResult(); renderMini();
+}
+function renderClues(first){
+  [["touch","fTouch","✋"],["look","fLook","👁️"]].forEach(([k,id,ic],n)=>{
+    const f=$(id);
+    f.querySelector(".fi").innerHTML=`<div class="ff front"><span class="big">${ic}</span><span><b>${tx(k)}</b><small>${tx("tap")}</small></span><kbd>${n?"L":"T"}</kbd></div>
+      <div class="ff back"><h4>${ic} ${L(U[k])}</h4>${L(cur.b.it[k==="touch"?"t":"l"])}</div>`;
+    f.classList.toggle("on",!!cur[k]);
+  });
+}
+let typeH=null;
+function stopTyping(){clearInterval(typeH);typeH=null;$("holo").classList.remove("talking")}
+const q=sg=>(sg[0]==="l-ar"||lang==="ar")?"«"+strip(sg[1])+"»":"“"+strip(sg[1])+"”";
+function typeAI(animate){
+  stopTyping();
+  const a=cur.b.it.a, el=$("aiText");
+  const segs=lang==="both"?[["l-en",a[0]],["l-ar",a[1]]]:[["",lang==="ar"?a[1]:a[0]]];
+  el.innerHTML=segs.map(([c])=>`<span class="${c}" ${c==="l-ar"||lang==="ar"?'lang="ar" dir="rtl"':""}></span>`).join("");
+  const spans=[...el.children];
+  if(!animate){spans.forEach((s,i)=>s.textContent=q(segs[i]));return}
+  let si=0,k=0; $("holo").classList.add("talking");
+  typeH=setInterval(()=>{
+    const s=spans[si], t=q(segs[si]); k++;
+    s.textContent=t.slice(0,k); s.classList.add("cur"); if(k%3===0) sfx.blip();
+    if(k>=t.length){s.classList.remove("cur");si++;k=0;if(si>=spans.length) stopTyping()}
+  },30);
 }
 function clue(kind){
-  const box=kind==="touch"?$("cTouch"):$("cLook");
-  box.className="clue shown"; box.innerHTML=`<h4>${t(kind+"H")}</h4>${cur.b.it[kind][lang]}`; beep(520,.08);
+  if(!cur||cur[kind]) return;
+  cur[kind]=true; $(kind==="touch"?"fTouch":"fLook").classList.add("on"); sfx.flip();
 }
-function startTimer(){
-  clearInterval(tHandle); const total=cfg.timer;
-  $("timerWrap").style.display=total?"":"none"; if(!total) return;
-  let left=total; drawT(left,total);
-  tHandle=setInterval(()=>{left--; drawT(left,total); if(left<=5&&left>0) beep(700,.06);
-    if(left<=0){clearInterval(tHandle); if(!cur.answered) answer(-1)}},1000);
+let tH=null;
+function startTimer(sec){
+  clearInterval(tH); cur.tTotal=sec; cur.tLeft=sec; drawT();
+  if(!sec) return;
+  tH=setInterval(()=>{
+    if(!cur){clearInterval(tH);return}
+    cur.tLeft--; drawT();
+    if(cur.tLeft<=5&&cur.tLeft>0) sfx.tick();
+    if(cur.tLeft<=0){clearInterval(tH);timeUp()}
+  },1000);
 }
-function drawT(left,total){$("tNum").textContent=left; $("tArc").style.strokeDashoffset=194.8*(1-left/total);
-  $("tArc").style.stroke=left<=10?"#ff5a6a":"#ffc94a"}
-
+function stopTimer(){clearInterval(tH)}
+function drawT(){
+  const w=$("timer");
+  if(!cur.tTotal||cur.phase==="done"){w.style.display="none";return}
+  w.style.display=""; $("tNum").textContent=cur.tLeft;
+  $("tArc").style.strokeDashoffset=213.6*(1-cur.tLeft/cur.tTotal);
+  w.classList.toggle("warn",cur.tLeft<=10); w.classList.toggle("crit",cur.tLeft<=5);
+}
+function timeUp(){
+  if(!cur) return;
+  if(cur.phase==="ask") answer(-1);
+  else if(cur.phase==="steal"){cur.outcome=cur.timeout?"timeUp":"wrong";finish()}
+}
+function answerPos(pos){if(cur){const k=cur.b.order[pos];if(k!==undefined) answer(k)}}
 function answer(k){
-  if(cur.answered) return; cur.answered=true; clearInterval(tHandle);
-  const ok=k===0, tm=G.teams[G.turn];
-  document.querySelectorAll(".ch").forEach(btn=>{btn.disabled=true; const kk=+btn.dataset.k;
-    if(kk===0) btn.classList.add("right"); else if(kk===k) btn.classList.add("wrong"); else btn.classList.add("dim")});
-  clue("touch"); clue("look");
-  const bb=$("bigBox"); bb.className="bigbox open"; bb.textContent=cur.b.it.icon;
-  $("objName").textContent=cur.b.it.name[lang];
-  const r=$("result"); r.className="result on "+(ok?"good":"bad");
-  $("resTitle").textContent=ok?t("correct"):(k<0?t("timeUp"):t("wrong"))+" "+t("itWas")+" "+cur.b.it.choices[0][lang];
-  if(ok){tm.score+=1; floatTxt("+1",tm.color); win(); confetti(60)} else lose();
-  cur.b.done=true; cur.b.by=G.turn; renderBoard();
-  $("nextBtn").classList.add("on");
+  if(!cur||(cur.phase!=="ask"&&cur.phase!=="steal")) return;
+  if(k>=0&&cur.wrong.includes(k)) return;
+  stopTimer();
+  const P=G.players;
+  if(cur.phase==="ask"){
+    const p=P[G.turn];
+    if(k===0){award(G.turn,1);cur.scorer=G.turn;cur.outcome="correct";p.streak++;p.best=Math.max(p.best,p.streak);finish();return}
+    p.streak=0; cur.timeout=k<0; if(k>=0) cur.wrong.push(k);
+    nope();
+    if(cfg.steal&&P.length>1){
+      cur.phase="steal"; cur.stealer=(G.turn+1)%P.length;
+      renderPlay(false); sfx.steal(); startTimer(cfg.timer?Math.min(20,cfg.timer):0); renderBoard(); return;
+    }
+    cur.outcome=k<0?"timeUp":"wrong"; finish(); return;
+  }
+  /* steal phase */
+  if(k===0){const s=P[cur.stealer];award(cur.stealer,1);cur.scorer=cur.stealer;cur.outcome="stole";s.streak++;s.best=Math.max(s.best,s.streak);finish();return}
+  if(k>=0) cur.wrong.push(k);
+  nope(); cur.outcome="wrong"; finish();
 }
-function showWhy(){$("why").classList.add("on")}
-function bonus(yes){
-  if(cur.bonusDone) return; cur.bonusDone=true; showWhy(); $("bonusBtns").style.display="none";
-  if(yes){const tm=G.teams[G.turn]; tm.score+=2; floatTxt("+2",tm.color); win(); confetti(120); renderBoard()}
+function skipSteal(){if(cur&&cur.phase==="steal"){stopTimer();cur.outcome=cur.timeout?"timeUp":"wrong";finish()}}
+function nope(){const sp=$("spec");sp.classList.remove("nope");void sp.offsetWidth;sp.classList.add("nope");sfx.wrong();if(navigator.vibrate)try{navigator.vibrate(120)}catch(e){}}
+function finish(){
+  stopTimer();
+  cur.phase="done"; cur.b.done=true; cur.b.by=cur.scorer; cur.touch=true; cur.look=true;
+  renderPlay(false);
+  const sp=$("spec"); sp.classList.add("open"); sparks();
+  setTimeout(()=>sfx.reveal(),60);
+  if(cur.scorer>=0){
+    setTimeout(()=>{sfx.right();confetti(110)},350);
+    const s=G.players[cur.scorer]; if(s.streak>=2) setTimeout(()=>combo(s),1200);
+  }
+  renderBoard();
+  const r=$("result"); setTimeout(()=>{if(r.classList.contains("on")) r.scrollIntoView({behavior:"smooth",block:"nearest"})},1000);
 }
-function closeBox(){
-  $("mPlay").classList.remove("on"); clearInterval(tHandle); clearInterval(typeHandle);
-  G.turn=(G.turn+1)%G.teams.length; renderBoard();
-  if(G.boxes.every(b=>b.done)) setTimeout(endGame,400);
+function sparks(){
+  const box=$("sparks"); box.innerHTML="";
+  for(let i=0;i<26;i++){const a=Math.random()*Math.PI*2, d=90+Math.random()*120, s=document.createElement("i");
+    s.style.setProperty("--x",Math.cos(a)*d+"px"); s.style.setProperty("--y",Math.sin(a)*d*0.8+"px"); s.style.animationDelay=(Math.random()*.15)+"s"; box.appendChild(s)}
 }
-function endGame(){
+function renderSteal(){
+  const s=$("steal");
+  if(!cur||cur.phase!=="steal"){s.className="steal";s.innerHTML="";return}
+  const p=G.players[cur.stealer]; s.className="steal on"; s.style.setProperty("--c",p.color);
+  s.innerHTML=`<span class="sbolt">⚡</span><div class="stxt"><b>${txi("stealT")}</b><div>${p.av} <b style="color:${p.color}">${pName(p)}</b> — ${txi("stealSub")}</div></div><button class="btn" onclick="skipSteal()"><i>⏭</i><span>${tx("skip")}</span></button>`;
+}
+function renderResult(){
+  const r=$("result");
+  if(!cur||cur.phase!=="done"){r.className="result";r.innerHTML="";return}
+  const it=cur.b.it, P=G.players, o=cur.outcome, good=cur.scorer>=0, tg=P[good?cur.scorer:G.turn];
+  const ic=o==="correct"?"🎉":o==="stole"?"⚡":o==="timeUp"?"⏰":"💥";
+  r.className="result on";
+  r.innerHTML=`<div class="res-h ${good?"good":"bad"}"><span class="res-ic">${ic}</span><div><h3>${tx(o)}</h3>
+      ${o==="stole"?`<div class="res-ans">${P[cur.scorer].av} ${pName(P[cur.scorer])}</div>`:""}
+      ${good?"":`<div class="res-ans">${txi("theAns")} <b>${Li(it.o[0])}</b></div>`}</div></div>
+    <div class="bonus"><div class="bonus-h"><span class="bh"><i>💡</i><span>${tx("bonusT")}</span></span><span class="for" style="--c:${tg.color}">${tg.av} ${pName(tg)}</span></div>
+      <div class="why ${cur.whyShown?"on":""}">${L(it.w)}</div>
+      <div class="btns">${cur.bonusDone
+        ?`<div class="verdict ${cur.bonusYes?"y":"n"}">${cur.bonusYes?"🌟 "+txi("gotBonus"):txi("noBonus")}</div>`
+        :`${cur.whyShown?"":`<button class="btn" onclick="showWhy()"><i>👁️</i><span>${tx("showWhy")}</span><kbd>A</kbd></button>`}
+          <button class="btn ok" onclick="bonus(true)"><i>✔</i><span>${tx("yes")}</span></button>
+          <button class="btn no" onclick="bonus(false)"><i>✖</i><span>${tx("no")}</span></button>`}</div></div>
+    <button class="cta next" onclick="nextTurn()"><span>${tx("next")}</span><span>➜</span><kbd>Enter</kbd></button>`;
+}
+function renderMini(){
   if(!G) return;
-  const ranked=[...G.teams].sort((a,b)=>b.score-a.score);
-  const tie=ranked.length>1&&ranked[0].score===ranked[1].score;
-  $("endTitle").innerHTML=tie?t("tie"):`🏆 <span style="color:${ranked[0].color}">${esc(ranked[0].name)}</span> ${t("winner")}`;
-  const medals=["🥇","🥈","🥉","🎖️"];
-  $("podium").innerHTML=ranked.map((tm,i)=>`<div class="pod" style="height:${230-i*30}px;border-top:6px solid ${tm.color}"><div class="m">${medals[i]}</div><div class="nm">${esc(tm.name)}</div><div class="pt">${tm.score}</div></div>`).join("");
-  show("sEnd"); confetti(260); fanfare();
+  $("mini").innerHTML=G.players.map((p,i)=>`<div class="mc ${i===G.turn?"turn":""}" style="--c:${p.color};--cg:${p.color}66"><span class="a">${p.av}</span><span>${pName(p)}</span><b>${p.score}</b>${p.streak>=2?"🔥":""}</div>`).join("");
+}
+function showWhy(){if(cur&&cur.phase==="done"&&!cur.whyShown){cur.whyShown=true;sfx.flip();renderResult()}}
+function bonus(yes){
+  if(!cur||cur.phase!=="done"||cur.bonusDone) return;
+  cur.bonusDone=true; cur.bonusYes=yes; cur.whyShown=true;
+  const tgt=cur.scorer>=0?cur.scorer:G.turn;
+  if(yes){award(tgt,2);sfx.bonus();confetti(170);setTimeout(()=>burst(innerWidth*.3,innerHeight*.3,"#ffcc4d"),200);setTimeout(()=>burst(innerWidth*.7,innerHeight*.3,"#ff4fd8"),450)}
+  else sfx.click();
+  renderResult(); renderMini(); renderBoard();
+}
+function award(i,pts){
+  const p=G.players[i]; p.score+=pts;
+  const d=document.createElement("div"); d.className="float"; d.textContent="+"+pts; d.style.color=p.color;
+  d.style.left=(innerWidth/2)+"px"; d.style.top=(innerHeight*.42)+"px"; document.body.appendChild(d); setTimeout(()=>d.remove(),1500);
+  renderMini();
+}
+function combo(p){
+  const d=document.createElement("div"); d.className="combo"; d.style.setProperty("--c",p.color);
+  d.innerHTML=`<b>🔥 ${esc(lang==="ar"?U.combo[1]:U.combo[0])} ×${p.streak}</b><span>${p.av} ${pName(p)} · ${p.streak} ${txi("streak")}</span>`;
+  document.body.appendChild(d); sfx.combo(); setTimeout(()=>d.remove(),2300);
+}
+function closeModal(){stopTimer();stopTyping();$("mPlay").classList.remove("on");document.body.classList.remove("modal-open");cur=null}
+function backToBoard(){if(cur&&cur.phase==="ask"&&!cur.wrong.length){closeModal();sfx.click();renderBoard()}}
+function nextTurn(){
+  if(!cur||cur.phase!=="done") return;
+  closeModal(); sfx.click();
+  G.turn=(G.turn+1)%G.players.length; renderBoard();
+  if(G.boxes.every(b=>b.done)) setTimeout(endGame,500);
 }
 
-/* ===================== FX ===================== */
-function floatTxt(s,color){const d=document.createElement("div");d.className="float";d.textContent=s;d.style.color=color;
-  d.style.left=(innerWidth/2-30)+"px";d.style.top=(innerHeight/2)+"px";document.body.appendChild(d);setTimeout(()=>d.remove(),1300)}
-let AC=null; function audio(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}
-function beep(f,d=.1,v=.08){if(!AC)return;const o=AC.createOscillator(),g=AC.createGain();o.type="triangle";o.frequency.value=f;
-  g.gain.setValueAtTime(v,AC.currentTime);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+d)}
-function win(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.18,.1),i*90))}
-function lose(){[330,262].forEach((f,i)=>setTimeout(()=>beep(f,.3,.1),i*200))}
-function fanfare(){[523,523,659,784,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.22,.1),i*140))}
-const cv=$("fx"),cx=cv.getContext("2d");let parts=[];
-function resize(){cv.width=innerWidth;cv.height=innerHeight} addEventListener("resize",resize);resize();
-function confetti(n){const cols=["#ffc94a","#ff7a59","#4aa8ff","#b679ff","#3fd9a0","#fff"];
-  for(let i=0;i<n;i++)parts.push({x:innerWidth/2,y:innerHeight/3,vx:(Math.random()-.5)*16,vy:Math.random()*-14-4,s:6+Math.random()*6,c:cols[i%cols.length],r:Math.random()*6,vr:(Math.random()-.5)*.4,life:120});
-  if(parts.length===n)requestAnimationFrame(tick)}
-function tick(){cx.clearRect(0,0,cv.width,cv.height);parts.forEach(p=>{p.vy+=.45;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life--;
-  cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);cx.restore()});
-  parts=parts.filter(p=>p.life>0&&p.y<innerHeight+40); if(parts.length)requestAnimationFrame(tick); else cx.clearRect(0,0,cv.width,cv.height)}
+/* ---------- end ---------- */
+let endTimers=[];
+function clearEndTimers(){endTimers.forEach(clearTimeout);endTimers=[]}
+function endGame(){if(!G) return; if(cur) closeModal(); show("sEnd"); renderEnd(true)}
+function renderEnd(anim){
+  clearEndTimers();
+  const P=G.players, ranked=[...P].sort((a,b)=>b.score-a.score);
+  ranked.forEach((p,i)=>p._r=i>0&&p.score===ranked[i-1].score?ranked[i-1]._r:i+1);
+  const top=ranked.filter(p=>p._r===1), tie=top.length>1;
+  $("endTitle").innerHTML=tie?`🤝 ${tx("tie")}`:`🏆 ${pName(top[0],true)}`;
+  $("endSub").innerHTML=tie?top.map(p=>p.av+" "+pName(p)).join(" · "):tx(G.players.length&&top[0].members.length?"champs":"champ");
+  const slots=[[ranked[1],"p2"],[ranked[0],"p1"],[ranked[2],"p3"]].filter(s=>s[0]);
+  $("podium").innerHTML=slots.map(([p,cl])=>`<div class="pcol ${cl}" style="--c:${p.color};--cg:${p.color}66">
+     <div class="pav">${p._r===1?'<span class="crown">👑</span>':""}${p.av}</div><div class="pnm">${pName(p,true)}</div>
+     ${p.members.length?`<div class="pmem" dir="auto">${p.members.map(esc).join(" · ")}</div>`:""}<div class="ppt">${p.score}</div><div class="pblock">${p._r}</div></div>`).join("");
+  $("rest").innerHTML=ranked.slice(3).map((p,i)=>`<div class="rrow" style="--c:${p.color};animation-delay:${(anim?2.6:0)+i*.12}s"><span class="rk">${p._r}</span><span>${p.av}</span><span class="nm">${pName(p)}</span><b>${p.score}</b></div>`).join("");
+  const best=[...P].sort((a,b)=>b.best-a.best)[0];
+  $("stats").innerHTML=best&&best.best>=2?`<div>🔥 ${txi("bestStreak")}</div><div><b>${best.av} ${pName(best)}</b> <bdi dir="ltr">×${best.best}</bdi></div>`:"";
+  const cols={p3:$("podium").querySelector(".p3"),p2:$("podium").querySelector(".p2"),p1:$("podium").querySelector(".p1")};
+  const drum=$("drum"), et=$("endTitle"), es=$("endSub");
+  if(!anim){drum.classList.remove("on");et.classList.add("on");es.classList.add("on");Object.values(cols).forEach(c=>c&&c.classList.add("up"));return}
+  et.classList.remove("on"); es.classList.remove("on");
+  drum.innerHTML=tx("drum"); drum.classList.add("on"); sfx.drum();
+  const T=(fn,ms)=>endTimers.push(setTimeout(fn,ms));
+  T(()=>{cols.p3&&cols.p3.classList.add("up");sfx.pop()},500);
+  T(()=>{cols.p2&&cols.p2.classList.add("up");sfx.pop()},1100);
+  T(()=>{drum.classList.remove("on");et.classList.add("on");es.classList.add("on");cols.p1&&cols.p1.classList.add("up");sfx.fanfare();confetti(320)},1900);
+  for(let i=0;i<7;i++) T(()=>{burst(innerWidth*(.15+Math.random()*.7),innerHeight*(.12+Math.random()*.3),COLORS[i%COLORS.length]);sfx.pop()},2300+i*380);
+}
+
+/* ============================== KEYBOARD ============================== */
+addEventListener("keydown",e=>{
+  if(e.ctrlKey||e.metaKey||e.altKey) return;
+  if(e.target&&e.target.matches&&e.target.matches("input,textarea")) return;
+  const c=e.code;
+  if(c==="KeyF"){toggleFS();e.preventDefault();return}
+  if($("sTitle").classList.contains("on")&&(c==="Enter"||c==="NumpadEnter"||c==="Space")){e.preventDefault();toSetup();return}
+  if(!cur||!$("mPlay").classList.contains("on")) return;
+  const m=c.match(/^(?:Digit|Numpad)([1-4])$/);
+  if(m){e.preventDefault();answerPos(+m[1]-1)}
+  else if(c==="KeyT") clue("touch");
+  else if(c==="KeyL") clue("look");
+  else if(c==="KeyA") showWhy();
+  else if(c==="Escape") backToBoard();
+  else if(c==="Enter"||c==="NumpadEnter"){e.preventDefault();if(cur.phase==="done") nextTurn()}
+});
+function toggleFS(){
+  try{
+    if(!document.fullscreenElement&&!document.webkitFullscreenElement){const d=document.documentElement;(d.requestFullscreen||d.webkitRequestFullscreen).call(d)?.catch?.(()=>{})}
+    else (document.exitFullscreen||document.webkitExitFullscreen).call(document);
+  }catch(e){}
+}
+/* tilt on boxes (mouse only, purely decorative) */
+$("board").addEventListener("pointermove",e=>{
+  if(e.pointerType!=="mouse") return;
+  const el=e.target.closest(".mbox:not(.done)"); if(!el) return;
+  const r=el.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
+  el.style.setProperty("--rx",(-y*18)+"deg"); el.style.setProperty("--ry",(x*20)+"deg");
+  el.style.setProperty("--mx",(x+.5)*100+"%"); el.style.setProperty("--my",(y+.5)*100+"%");
+});
+$("board").addEventListener("pointerout",e=>{
+  const el=e.target.closest(".mbox"); if(el&&!el.contains(e.relatedTarget)){el.style.removeProperty("--rx");el.style.removeProperty("--ry")}
+});
+
+/* ============================== SOUND ============================== */
+let AC=null;
+function ac(){
+  if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){AC=null}}
+  if(AC&&AC.state==="suspended") AC.resume().catch(()=>{});
+  return AC;
+}
+function tone(f,d=.12,v=.07,type="triangle",when=0,slide=0){
+  if(muted||!AC) return;
+  try{const t0=AC.currentTime+when,o=AC.createOscillator(),g=AC.createGain();
+    o.type=type;o.frequency.setValueAtTime(f,t0);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t0+d);
+    g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(v,t0+.012);g.gain.exponentialRampToValueAtTime(.0001,t0+d);
+    o.connect(g).connect(AC.destination);o.start(t0);o.stop(t0+d+.03)}catch(e){}
+}
+function noise(d=.3,v=.06,f0=600,f1=3000,when=0){
+  if(muted||!AC) return;
+  try{const t0=AC.currentTime+when,len=Math.max(1,AC.sampleRate*d|0),buf=AC.createBuffer(1,len,AC.sampleRate),ch=buf.getChannelData(0);
+    for(let i=0;i<len;i++)ch[i]=Math.random()*2-1;
+    const s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=buf;f.type="bandpass";f.Q.value=1.2;
+    f.frequency.setValueAtTime(f0,t0);f.frequency.exponentialRampToValueAtTime(f1,t0+d);
+    g.gain.setValueAtTime(v,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+d);
+    s.connect(f).connect(g).connect(AC.destination);s.start(t0);s.stop(t0+d+.02)}catch(e){}
+}
+const sfx={
+  click:()=>tone(720,.06,.04,"sine"),
+  whoosh:()=>{noise(.45,.05,300,2600);tone(260,.4,.03,"sine",0,620)},
+  start:()=>{[392,523,659,784].forEach((f,i)=>tone(f,.2,.06,"triangle",i*.07));noise(.5,.03,400,3000)},
+  blip:()=>tone(1500+Math.random()*500,.025,.012,"square"),
+  flip:()=>{noise(.16,.05,2400,700);tone(900,.08,.03,"sine",0,1300)},
+  tick:()=>tone(980,.05,.05,"square"),
+  wrong:()=>{tone(240,.32,.07,"sawtooth",0,120);tone(180,.3,.04,"square",.05,90)},
+  right:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.24,.08,"triangle",i*.08)),
+  reveal:()=>{noise(.6,.06,300,5000);[880,1175,1568].forEach((f,i)=>tone(f,.45,.04,"sine",.15+i*.06))},
+  bonus:()=>[784,988,1175,1568,1976].forEach((f,i)=>tone(f,.26,.06,"sine",i*.07)),
+  combo:()=>[659,880,1109,1319,1760].forEach((f,i)=>tone(f,.16,.05,"square",i*.055)),
+  steal:()=>[440,587,440,587].forEach((f,i)=>tone(f,.1,.05,"square",i*.1)),
+  pop:()=>{noise(.25,.05,1200,200);tone(140,.25,.06,"sine",0,60)},
+  drum:()=>{for(let i=0;i<18;i++)noise(.07,.025+i*.003,140,260,i*.09)},
+  fanfare:()=>[[523,0],[523,.14],[523,.28],[659,.42],[784,.7],[659,.98],[784,1.12],[1047,1.32]].forEach(([f,w])=>{tone(f,.3,.08,"triangle",w);tone(f/2,.3,.04,"sine",w)})
+};
+const SVG_ON='<svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>';
+const SVG_OFF='<svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
+function renderSnd(){$("sndBtn").innerHTML=muted?SVG_OFF:SVG_ON}
+function toggleMute(){muted=!muted;save();renderSnd();if(!muted){ac();sfx.click()}}
+
+/* ============================== VISUAL FX ============================== */
+const fx=$("fx"), fxc=fx.getContext("2d"); let parts=[], fxRun=false;
+const PAL=["#ffcc4d","#ff4fd8","#34e7ff","#8b5cf6","#3cf2a5","#ffffff","#ff8a5b"];
+function confetti(n,x=innerWidth/2,y=innerHeight*.35){
+  for(let i=0;i<n;i++) parts.push({k:0,x,y,vx:(Math.random()-.5)*20,vy:-Math.random()*17-4,s:6+Math.random()*7,c:PAL[i%PAL.length],r:Math.random()*6,vr:(Math.random()-.5)*.4,life:150+Math.random()*50});
+  runFx();
+}
+function burst(x,y,col){
+  for(let i=0;i<70;i++){const a=Math.random()*Math.PI*2,s=2+Math.random()*6;parts.push({k:1,x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,c:Math.random()<.3?"#fff":col,life:60+Math.random()*30,max:90})}
+  runFx();
+}
+function runFx(){if(!fxRun){fxRun=true;requestAnimationFrame(fxTick)}}
+function fxTick(){
+  fxc.clearRect(0,0,fx.width,fx.height);
+  for(const p of parts){
+    p.life--;
+    if(p.k===0){p.vy+=.42;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;fxc.save();fxc.translate(p.x,p.y);fxc.rotate(p.r);fxc.fillStyle=p.c;fxc.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);fxc.restore()}
+    else{p.vy+=.05;p.vx*=.97;p.vy*=.97;p.x+=p.vx;p.y+=p.vy;fxc.globalAlpha=Math.max(0,p.life/p.max);fxc.fillStyle=p.c;fxc.beginPath();fxc.arc(p.x,p.y,2.2,0,6.283);fxc.fill();fxc.globalAlpha=1}
+  }
+  parts=parts.filter(p=>p.life>0&&p.y<innerHeight+60);
+  if(parts.length) requestAnimationFrame(fxTick); else {fxRun=false;fxc.clearRect(0,0,fx.width,fx.height)}
+}
+/* animated star / particle background */
+const bg=$("bg"), bgc=bg.getContext("2d"); let stars=[], dots=[];
+const RM=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+function sizeCanvases(){
+  fx.width=innerWidth; fx.height=innerHeight; bg.width=innerWidth; bg.height=innerHeight;
+  const A=innerWidth*innerHeight;
+  stars=Array.from({length:Math.min(170,A/8000|0)},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.3+.2,t:Math.random()*6.3,s:.008+Math.random()*.03}));
+  dots=Array.from({length:Math.min(42,A/28000|0)},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,c:["52,231,255","255,79,216","139,92,246"][Math.random()*3|0]}));
+  if(RM) drawBg();
+}
+function drawBg(){
+  const W=bg.width,H=bg.height; bgc.clearRect(0,0,W,H);
+  for(const s of stars){s.t+=s.s;bgc.globalAlpha=.25+.65*Math.abs(Math.sin(s.t));bgc.fillStyle="#fff";bgc.beginPath();bgc.arc(s.x,s.y,s.r,0,6.283);bgc.fill()}
+  bgc.globalAlpha=1;
+  for(let i=0;i<dots.length;i++){const a=dots[i];
+    if(!RM){a.x+=a.vx;a.y+=a.vy;if(a.x<0)a.x=W;if(a.x>W)a.x=0;if(a.y<0)a.y=H;if(a.y>H)a.y=0}
+    for(let j=i+1;j<dots.length;j++){const b=dots[j],dx=a.x-b.x,dy=a.y-b.y,d=dx*dx+dy*dy;
+      if(d<19600){bgc.strokeStyle=`rgba(${a.c},${(1-Math.sqrt(d)/140)*.22})`;bgc.lineWidth=1;bgc.beginPath();bgc.moveTo(a.x,a.y);bgc.lineTo(b.x,b.y);bgc.stroke()}}
+    bgc.fillStyle=`rgba(${a.c},.85)`;bgc.shadowColor=`rgb(${a.c})`;bgc.shadowBlur=10;bgc.beginPath();bgc.arc(a.x,a.y,2,0,6.283);bgc.fill();bgc.shadowBlur=0;
+  }
+}
+function bgLoop(){if(!document.hidden) drawBg(); requestAnimationFrame(bgLoop)}
+addEventListener("resize",sizeCanvases); sizeCanvases(); if(!RM) requestAnimationFrame(bgLoop);
+/* floating specimen icons on the title screen */
+(function(){const f=$("floaters"),ic=shuffle(ITEMS.map(x=>x.i)).slice(0,16);
+  f.innerHTML=ic.map((e,i)=>`<span style="left:${(i*6.3+Math.random()*4)%98}%;font-size:${26+Math.random()*30|0}px;animation-duration:${16+Math.random()*16}s;animation-delay:${-Math.random()*30}s">${e}</span>`).join("")})();
 
 applyLang();
 </script>
