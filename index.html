@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mystery Physics Box</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#0b1430; --bg2:#1b2a5c; --card:#16224a; --card2:#1f2f63; --line:#2e4385;
+  --ink:#f3f6ff; --mute:#9fb0e0; --gold:#ffc94a; --ok:#2fd27a; --bad:#ff5a6a; --ai:#7cf3ff;
+  --t1:#ff7a59; --t2:#4aa8ff; --t3:#b679ff; --t4:#3fd9a0;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:"Baloo Bhaijaan 2",system-ui,sans-serif; color:var(--ink);
+  background:radial-gradient(1200px 700px at 80% -10%,#2b3f8a 0,transparent 60%),
+             radial-gradient(900px 600px at -10% 110%,#3a1f6b 0,transparent 55%),
+             linear-gradient(160deg,var(--bg1),var(--bg2));
+  min-height:100vh; overflow-x:hidden;
+}
+button{font-family:inherit;cursor:pointer;border:0;color:inherit}
+.screen{display:none;min-height:100vh;padding:20px 16px 28px}
+.screen.on{display:block}
+.wrap{max-width:1180px;margin:0 auto}
+
+/* ---------- header ---------- */
+.top{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:54px;height:54px;border-radius:14px;display:grid;place-items:center;font-size:30px;
+  background:linear-gradient(145deg,#ffd76a,#ff9f3a);box-shadow:0 6px 0 #b8691a,0 10px 24px #0007}
+.brand h1{margin:0;font-size:clamp(22px,3.4vw,36px);line-height:1}
+.brand small{color:var(--mute);font-size:15px}
+.pill{background:#ffffff14;border:1px solid #ffffff22;border-radius:999px;padding:6px 14px;font-weight:700}
+.lang{padding:8px 16px;border-radius:999px;background:#ffffff18;border:1px solid #ffffff30;font-weight:700}
+
+/* ---------- setup ---------- */
+.setup{display:grid;gap:18px;grid-template-columns:1.2fr 1fr;margin-top:10px}
+@media(max-width:860px){.setup{grid-template-columns:1fr}}
+.panel{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:22px;padding:20px}
+.panel h2{margin:0 0 12px;font-size:22px}
+.rules li{margin:6px 0;color:#dfe6ff;font-size:17px}
+.rules b{color:var(--gold)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
+.opt{padding:10px 16px;border-radius:14px;background:#ffffff10;border:2px solid #ffffff20;font-weight:700;font-size:17px}
+.opt.sel{background:var(--gold);color:#3a2600;border-color:var(--gold)}
+.label{color:var(--mute);font-weight:700;font-size:15px}
+.teams{display:grid;gap:8px;margin:8px 0 16px}
+.teams input{width:100%;padding:10px 14px;border-radius:12px;border:2px solid #ffffff22;background:#0b1430;color:var(--ink);font:inherit;font-size:18px}
+.go{width:100%;padding:16px;border-radius:18px;font-size:24px;font-weight:800;color:#3a2600;
+  background:linear-gradient(180deg,#ffd96b,#ffb52e);box-shadow:0 6px 0 #b8741a}
+.go:active{transform:translateY(4px);box-shadow:0 2px 0 #b8741a}
+
+/* ---------- scoreboard ---------- */
+.scores{display:flex;gap:10px;flex-wrap:wrap}
+.sc{display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:16px;background:#ffffff10;border:2px solid transparent;transition:.3s}
+.sc .dot{width:14px;height:14px;border-radius:50%}
+.sc .n{font-weight:700;font-size:17px}
+.sc .p{font-weight:800;font-size:24px;min-width:28px;text-align:center}
+.sc.turn{border-color:var(--gold);background:#ffc94a22;transform:scale(1.05)}
+.turnlbl{font-size:20px;font-weight:700;margin:6px 0 14px;text-align:center}
+.turnlbl span{color:var(--gold)}
+
+/* ---------- board ---------- */
+.board{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.box{position:relative;aspect-ratio:1/1;border-radius:20px;perspective:600px}
+.box .lid{position:absolute;inset:0;border-radius:20px;display:grid;place-items:center;
+  background:linear-gradient(160deg,#c98b4a,#8b5527);box-shadow:inset 0 0 0 6px #6d3f19,0 8px 0 #4a2a10,0 14px 26px #0008;
+  font-size:52px;font-weight:800;color:#ffe9c6;text-shadow:0 3px 0 #5a3312;transition:transform .25s}
+.box .lid:before{content:"";position:absolute;left:0;right:0;top:44%;height:14%;background:#6d3f19aa}
+.box .lid i{font-style:normal;position:relative}
+.box .lid em{position:absolute;bottom:10px;font-style:normal;font-size:22px;opacity:.9}
+.box:not(.done):hover .lid{transform:translateY(-6px) rotate(-2deg)}
+.box.done .lid{background:linear-gradient(160deg,#2a3b74,#1a2552);box-shadow:inset 0 0 0 4px #3c55a8,0 6px 0 #0d1530;color:#fff;font-size:56px;text-shadow:none}
+.box.done .lid:before{display:none}
+.box.done .lid em{font-size:14px;bottom:8px;color:var(--mute)}
+.box .who{position:absolute;top:8px;inset-inline-end:8px;width:16px;height:16px;border-radius:50%;z-index:2}
+
+/* ---------- play modal ---------- */
+.modal{position:fixed;inset:0;background:#050a1ccc;backdrop-filter:blur(4px);display:none;z-index:20;overflow:auto;padding:18px 12px}
+.modal.on{display:block}
+.play{max-width:980px;margin:0 auto;background:linear-gradient(180deg,#1d2c5f,#121b3d);border:1px solid var(--line);border-radius:26px;padding:20px;position:relative}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.ph h2{margin:0;font-size:28px}
+.timer{position:relative;width:74px;height:74px}
+.timer svg{transform:rotate(-90deg)}
+.timer b{position:absolute;inset:0;display:grid;place-items:center;font-size:26px}
+.stage{display:grid;grid-template-columns:240px 1fr;gap:20px;margin-top:14px}
+@media(max-width:760px){.stage{grid-template-columns:1fr}}
+.bigbox{height:220px;border-radius:24px;display:grid;place-items:center;font-size:96px;position:relative;
+  background:linear-gradient(160deg,#c98b4a,#8b5527);box-shadow:inset 0 0 0 8px #6d3f19,0 10px 0 #4a2a10}
+.bigbox.shake{animation:shake 1.2s infinite}
+.bigbox .q{font-size:110px;color:#ffe9c6;text-shadow:0 4px 0 #5a3312}
+.bigbox.open{background:radial-gradient(circle at 50% 40%,#fff6d8,#ffd27a 55%,#c98b4a);animation:pop .6s}
+@keyframes shake{0%,100%{transform:rotate(0)}10%{transform:rotate(-3deg)}20%{transform:rotate(3deg)}30%{transform:rotate(-2deg)}40%{transform:rotate(0)}}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.1)}100%{transform:scale(1)}}
+.objname{text-align:center;font-size:24px;font-weight:800;margin-top:10px;min-height:34px;color:var(--gold)}
+.ai{background:#071a2a;border:2px solid #1f6f86;border-radius:18px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 0 24px #1fb6d633 inset}
+.ai .bot{font-size:34px;line-height:1;animation:bob 2s infinite}
+@keyframes bob{50%{transform:translateY(-4px)}}
+.ai .t{color:var(--ai);font-size:20px;min-height:30px}
+.ai .t small{display:block;color:#5fb7c9;font-size:14px;font-weight:700;margin-bottom:2px}
+.cur:after{content:"▍";animation:blink 1s infinite}
+@keyframes blink{50%{opacity:0}}
+.clues{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+@media(max-width:520px){.clues{grid-template-columns:1fr}}
+.clue{border-radius:16px;padding:12px 14px;background:#ffffff0d;border:2px dashed #ffffff30;min-height:84px;font-size:18px}
+.clue button{width:100%;height:100%;min-height:60px;background:none;font-size:20px;font-weight:700;color:var(--ink)}
+.clue.shown{border-style:solid;border-color:#ffc94a77;background:#ffc94a14}
+.clue h4{margin:0 0 4px;color:var(--gold);font-size:16px}
+.qline{margin:18px 0 10px;font-size:22px;font-weight:800;text-align:center}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.choices{grid-template-columns:1fr}}
+.ch{padding:16px;border-radius:16px;font-size:21px;font-weight:700;background:#2a3d7e;border:2px solid #3f58aa;box-shadow:0 5px 0 #18245a;transition:.15s}
+.ch:hover:not(:disabled){background:#33499a}
+.ch:disabled{cursor:default}
+.ch.right{background:var(--ok);border-color:var(--ok);color:#03250f;box-shadow:0 5px 0 #13824a}
+.ch.wrong{background:var(--bad);border-color:var(--bad);color:#3b0006;box-shadow:0 5px 0 #a3202d}
+.ch.dim{opacity:.45}
+.result{margin-top:16px;border-radius:18px;padding:16px;display:none}
+.result.on{display:block;animation:pop .4s}
+.result.good{background:#2fd27a1f;border:2px solid #2fd27a88}
+.result.bad{background:#ff5a6a1a;border:2px solid #ff5a6a88}
+.result h3{margin:0 0 8px;font-size:24px}
+.explain{margin-top:12px;background:#ffffff0d;border-radius:14px;padding:12px 14px}
+.explain h4{margin:0 0 8px;color:var(--gold);font-size:19px}
+.why{display:none;font-size:18px;color:#e6ecff;background:#0b1430;border-radius:12px;padding:10px 12px;margin:8px 0}
+.why.on{display:block}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.b{padding:12px 18px;border-radius:14px;font-size:18px;font-weight:800;background:#ffffff18;border:2px solid #ffffff30}
+.b.ok{background:var(--ok);color:#03250f;border-color:var(--ok)}
+.b.no{background:#ff5a6a33;border-color:var(--bad)}
+.b.gold{background:var(--gold);color:#3a2600;border-color:var(--gold)}
+.next{width:100%;margin-top:14px;display:none}
+.next.on{display:block}
+.float{position:fixed;pointer-events:none;font-size:46px;font-weight:800;z-index:50;animation:up 1.2s forwards;text-shadow:0 3px 0 #0008}
+@keyframes up{to{transform:translateY(-120px);opacity:0}}
+
+/* ---------- end ---------- */
+.podium{display:flex;justify-content:center;align-items:flex-end;gap:14px;margin:30px 0 20px;flex-wrap:wrap}
+.pod{width:170px;border-radius:18px 18px 8px 8px;text-align:center;padding:14px 8px;background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line)}
+.pod .m{font-size:46px}
+.pod .nm{font-size:22px;font-weight:800}
+.pod .pt{font-size:34px;font-weight:800;color:var(--gold)}
+.endt{text-align:center;font-size:clamp(30px,5vw,54px);margin:20px 0 0}
+canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:60}
+.foot{color:var(--mute);text-align:center;font-size:14px;margin-top:18px}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+
+<!-- ============ SETUP ============ -->
+<section class="screen on" id="sSetup"><div class="wrap">
+  <div class="top">
+    <div class="brand"><div class="logo">📦</div><div><h1 data-t="title"></h1><small data-t="subtitle"></small></div></div>
+    <button class="lang" onclick="toggleLang()" data-t="langBtn"></button>
+  </div>
+  <div class="setup">
+    <div class="panel">
+      <h2 data-t="howTitle"></h2>
+      <ol class="rules" id="rules"></ol>
+    </div>
+    <div class="panel">
+      <div class="label" data-t="teamsLbl"></div>
+      <div class="row" id="optTeams"></div>
+      <div class="teams" id="teamNames"></div>
+      <div class="label" data-t="boxesLbl"></div>
+      <div class="row" id="optBoxes"></div>
+      <div class="label" data-t="timerLbl"></div>
+      <div class="row" id="optTimer"></div>
+      <button class="go" onclick="startGame()" data-t="start"></button>
+    </div>
+  </div>
+  <div class="foot" data-t="foot"></div>
+</div></section>
+
+<!-- ============ BOARD ============ -->
+<section class="screen" id="sBoard"><div class="wrap">
+  <div class="top">
+    <div class="brand"><div class="logo">📦</div><div><h1 data-t="title"></h1></div></div>
+    <div class="scores" id="scores"></div>
+  </div>
+  <div class="turnlbl" id="turnLbl"></div>
+  <div class="board" id="board"></div>
+  <div class="foot"><button class="b" onclick="endGame()" data-t="finishNow"></button></div>
+</div></section>
+
+<!-- ============ END ============ -->
+<section class="screen" id="sEnd"><div class="wrap">
+  <h1 class="endt" id="endTitle"></h1>
+  <div class="podium" id="podium"></div>
+  <div style="max-width:420px;margin:0 auto"><button class="go" onclick="show('sSetup')" data-t="again"></button></div>
+</div></section>
+
+<!-- ============ PLAY MODAL ============ -->
+<div class="modal" id="mPlay"><div class="play">
+  <div class="ph">
+    <h2 id="pTitle"></h2>
+    <div class="pill" id="pTeam"></div>
+    <div class="timer" id="timerWrap">
+      <svg width="74" height="74"><circle cx="37" cy="37" r="31" stroke="#ffffff22" stroke-width="7" fill="none"/>
+      <circle id="tArc" cx="37" cy="37" r="31" stroke="#ffc94a" stroke-width="7" fill="none" stroke-linecap="round" stroke-dasharray="194.8" stroke-dashoffset="0"/></svg>
+      <b id="tNum"></b>
+    </div>
+  </div>
+  <div class="stage">
+    <div>
+      <div class="bigbox shake" id="bigBox"><span class="q">?</span></div>
+      <div class="objname" id="objName"></div>
+    </div>
+    <div>
+      <div class="ai"><div class="bot">🤖</div><div class="t"><small data-t="aiLbl"></small><span id="aiText" class="cur"></span></div></div>
+      <div class="clues">
+        <div class="clue" id="cTouch"></div>
+        <div class="clue" id="cLook"></div>
+      </div>
+    </div>
+  </div>
+  <div class="qline" data-t="question"></div>
+  <div class="choices" id="choices"></div>
+  <div class="result" id="result">
+    <h3 id="resTitle"></h3>
+    <div class="explain">
+      <h4 data-t="bonusTitle"></h4>
+      <div class="why" id="why"></div>
+      <div class="btns" id="bonusBtns">
+        <button class="b" onclick="showWhy()" data-t="showWhy"></button>
+        <button class="b ok" onclick="bonus(true)" data-t="bonusYes"></button>
+        <button class="b no" onclick="bonus(false)" data-t="bonusNo"></button>
+      </div>
+    </div>
+  </div>
+  <button class="go next" id="nextBtn" onclick="closeBox()" data-t="nextTeam"></button>
+</div></div>
+
+<script>
+/* ===================== CONTENT ===================== */
+const ITEMS = [
+ {icon:"🧲", name:{en:"Magnet",ar:"مغناطيس"},
+  touch:{en:"Cold, heavy metal. Something keeps sticking to it!",ar:"معدن بارد وثقيل.. وفيه أشياء تلتصق فيه!"},
+  look:{en:"Paper clips jump towards it from a distance.",ar:"مشابك الورق تقفز نحوه من مسافة."},
+  ai:{en:"I pull without hands, and I have two faces that never agree: North and South.",ar:"أجذب بلا أيدٍ، ولي وجهان لا يتفقان أبدًا: شمال وجنوب."},
+  choices:[{en:"Magnetism",ar:"المغناطيسية"},{en:"Friction",ar:"الاحتكاك"},{en:"Refraction",ar:"انكسار الضوء"},{en:"Sound",ar:"الصوت"}],
+  why:{en:"A magnet has a magnetic field that attracts iron and steel. Like poles repel, unlike poles attract.",ar:"للمغناطيس مجال مغناطيسي يجذب الحديد والفولاذ. الأقطاب المتشابهة تتنافر والمختلفة تتجاذب."}},
+ {icon:"🔺", name:{en:"Prism",ar:"منشور زجاجي"},
+  touch:{en:"Smooth glass, a triangle shape with sharp edges.",ar:"زجاج أملس على شكل مثلث وحوافه حادة."},
+  look:{en:"Shine a torch through it and a rainbow appears on the wall.",ar:"لما نسلط عليه ضوء كشاف يظهر قوس قزح على الجدار."},
+  ai:{en:"Give me white light, and I'll give you back seven colours.",ar:"أعطني ضوءًا أبيض.. أردّه لك سبعة ألوان."},
+  choices:[{en:"Dispersion of light",ar:"تحلل الضوء"},{en:"Reflection",ar:"انعكاس الضوء"},{en:"Magnetism",ar:"المغناطيسية"},{en:"Gravity",ar:"الجاذبية"}],
+  why:{en:"Light slows down and bends (refracts) in glass. Each colour bends by a different amount, so white light splits into a spectrum.",ar:"الضوء يبطئ وينكسر داخل الزجاج، وكل لون ينكسر بمقدار مختلف، فينفصل الضوء الأبيض إلى ألوان الطيف."}},
+ {icon:"🌀", name:{en:"Spring",ar:"نابض (زنبرك)"},
+  touch:{en:"Coiled metal. When you squeeze it, it pushes back.",ar:"سلك ملفوف.. إذا ضغطته يدفع يدك للخلف."},
+  look:{en:"Stretch it, let go, and it returns to its shape.",ar:"إذا سحبته وتركته يرجع لشكله الأصلي."},
+  ai:{en:"Squeeze me and I'll store your effort. Let go and I'll give it all back.",ar:"اضغطني أخزّن تعبك.. اتركني أرجعه لك كله."},
+  choices:[{en:"Elasticity",ar:"المرونة"},{en:"Buoyancy",ar:"الطفو"},{en:"Static electricity",ar:"الكهرباء الساكنة"},{en:"Evaporation",ar:"التبخر"}],
+  why:{en:"A spring stores elastic potential energy. The more you stretch it, the bigger the force pulling it back (Hooke's law).",ar:"النابض يخزن طاقة وضع مرونية، وكلما زاد الشد زادت القوة التي تعيده (قانون هوك)."}},
+ {icon:"🪞", name:{en:"Small mirror",ar:"مرآة صغيرة"},
+  touch:{en:"Flat, very smooth and cold, like glass.",ar:"مسطح وأملس جدًا وبارد مثل الزجاج."},
+  look:{en:"You can see yourself, and torch light bounces up to the ceiling.",ar:"تشوف نفسك فيه، وضوء الكشاف يرتد للسقف."},
+  ai:{en:"I copy you perfectly... but I secretly swap your left and right.",ar:"أقلّدك تمامًا.. لكني أبدّل يمينك ويسارك سرًّا."},
+  choices:[{en:"Reflection of light",ar:"انعكاس الضوء"},{en:"Refraction",ar:"انكسار الضوء"},{en:"Magnetism",ar:"المغناطيسية"},{en:"Friction",ar:"الاحتكاك"}],
+  why:{en:"Light bounces off the shiny surface. The angle of incidence equals the angle of reflection.",ar:"الضوء يرتد عن السطح اللامع، وزاوية السقوط تساوي زاوية الانعكاس."}},
+ {icon:"🎈", name:{en:"Balloon",ar:"بالون"},
+  touch:{en:"Soft, light rubber filled with air.",ar:"مطاط ناعم وخفيف مليان هوا."},
+  look:{en:"Rub it on your hair: it sticks to the wall and lifts your hair up!",ar:"افركه في شعرك: يلتصق في الجدار ويرفع شعرك!"},
+  ai:{en:"Rub me on your head and I'll make your hair stand up to say hello.",ar:"افركني في رأسك.. وأخلّي شعرك يوقف يسلّم عليك."},
+  choices:[{en:"Static electricity",ar:"الكهرباء الساكنة"},{en:"Magnetism",ar:"المغناطيسية"},{en:"Gravity",ar:"الجاذبية"},{en:"Sound",ar:"الصوت"}],
+  why:{en:"Rubbing moves electrons from hair to balloon, so it becomes charged. Opposite charges attract.",ar:"الفرك ينقل الإلكترونات من الشعر إلى البالون فيصبح مشحونًا، والشحنات المختلفة تتجاذب."}},
+ {icon:"🎵", name:{en:"Tuning fork",ar:"شوكة رنانة"},
+  touch:{en:"A metal U-shape with a handle. It tingles after you tap it.",ar:"معدن على شكل U وله مقبض.. يرجف بعد ما تطقه."},
+  look:{en:"Dip it in water after tapping and the water splashes!",ar:"إذا غطسته في الماي بعد الطق، الماي يتطاير!"},
+  ai:{en:"Tap me once and I'll sing the same note... until I get tired.",ar:"اطرقني مرة.. وأغني نفس النغمة لين أتعب."},
+  choices:[{en:"Sound vibrations",ar:"اهتزاز الصوت"},{en:"Light",ar:"الضوء"},{en:"Magnetism",ar:"المغناطيسية"},{en:"Friction",ar:"الاحتكاك"}],
+  why:{en:"Sound is made by vibrations. The fork vibrates the air at a fixed frequency, giving one pitch.",ar:"الصوت ينتج عن الاهتزاز. الشوكة تهز الهواء بتردد ثابت فتعطي نغمة واحدة."}},
+ {icon:"🔍", name:{en:"Magnifying glass",ar:"عدسة مكبرة"},
+  touch:{en:"Round glass, thick in the middle and thin at the edges, with a handle.",ar:"زجاج دائري، سميك في النص ورقيق على الأطراف، وله مقبض."},
+  look:{en:"Small letters look much bigger through it.",ar:"الحروف الصغيرة تبان كبيرة من خلاله."},
+  ai:{en:"My belly is the thickest part of me, and I turn ants into giants.",ar:"بطني أسمك جزء فيّ.. وأحوّل النمل إلى عمالقة."},
+  choices:[{en:"Refraction by a lens",ar:"انكسار الضوء في العدسة"},{en:"Reflection",ar:"انعكاس الضوء"},{en:"Static electricity",ar:"الكهرباء الساكنة"},{en:"Elasticity",ar:"المرونة"}],
+  why:{en:"A convex lens bends light rays inwards, so the image we see looks larger.",ar:"العدسة المحدبة تكسر أشعة الضوء وتجمعها، فتبدو الصورة أكبر."}},
+ {icon:"🧭", name:{en:"Compass",ar:"بوصلة"},
+  touch:{en:"A small round case. Something spins freely inside.",ar:"علبة دائرية صغيرة.. وفيها شي يدور بحرية."},
+  look:{en:"Turn it any way: the needle always points the same direction.",ar:"لفها مثل ما تبي: الإبرة دايمًا تأشر لنفس الاتجاه."},
+  ai:{en:"Spin me as much as you like, I'll always look North.",ar:"لفّني قد ما تبي.. بظل أطالع الشمال."},
+  choices:[{en:"Earth's magnetic field",ar:"المجال المغناطيسي للأرض"},{en:"Gravity",ar:"الجاذبية"},{en:"Sound",ar:"الصوت"},{en:"Light",ar:"الضوء"}],
+  why:{en:"The needle is a tiny magnet. It lines up with Earth's magnetic field and points North.",ar:"الإبرة مغناطيس صغير يصطف مع المجال المغناطيسي للأرض فيشير للشمال."}},
+ {icon:"🧱", name:{en:"Sandpaper block",ar:"قطعة ورق صنفرة"},
+  touch:{en:"Very rough on one side, like tiny sand grains.",ar:"خشن جدًا من جهة، كأنه حبات رمل صغيرة."},
+  look:{en:"A toy car stops quickly when it rolls onto it.",ar:"السيارة اللعبة توقف بسرعة لما تمشي عليه."},
+  ai:{en:"I'm the enemy of sliding, and I turn motion into heat.",ar:"أنا عدو الانزلاق.. وأحوّل الحركة إلى حرارة."},
+  choices:[{en:"Friction",ar:"الاحتكاك"},{en:"Buoyancy",ar:"الطفو"},{en:"Refraction",ar:"انكسار الضوء"},{en:"Magnetism",ar:"المغناطيسية"}],
+  why:{en:"Friction is a force that opposes motion between two surfaces. Rough surfaces make more friction.",ar:"الاحتكاك قوة تعاكس الحركة بين سطحين، والسطوح الخشنة يكون احتكاكها أكبر."}},
+ {icon:"🏓", name:{en:"Ping-pong ball",ar:"كرة طاولة"},
+  touch:{en:"Very light and hollow, it sounds empty when you tap it.",ar:"خفيفة جدًا ومجوفة، صوتها فاضي لما تطقها."},
+  look:{en:"Push it under water and it pops right back up.",ar:"إذا غطستها في الماي تطلع فوق بسرعة."},
+  ai:{en:"The water tries to drown me, but ends up lifting me.",ar:"الماء يحاول يغرقني.. ويطلع هو اللي يرفعني."},
+  choices:[{en:"Buoyancy",ar:"الطفو"},{en:"Gravity",ar:"الجاذبية"},{en:"Elasticity",ar:"المرونة"},{en:"Static electricity",ar:"الكهرباء الساكنة"}],
+  why:{en:"Water pushes up with an upthrust force. The ball is less dense than water, so the upthrust beats its weight and it floats.",ar:"الماء يدفع لأعلى بقوة الطفو، وكثافة الكرة أقل من الماء فتغلب قوة الطفو وزنها فتطفو."}},
+ {icon:"⏱️", name:{en:"Pendulum",ar:"بندول"},
+  touch:{en:"A string with a small heavy ball tied at the end.",ar:"خيط في طرفه كرة صغيرة ثقيلة."},
+  look:{en:"Let it go and it swings back and forth, steady like a clock.",ar:"إذا تركته يتأرجح رايح جاي بانتظام مثل الساعة."},
+  ai:{en:"Gravity pulls me down, but I keep coming back like a clock.",ar:"الجاذبية تسحبني لتحت.. بس أرجع كل مرة مثل الساعة."},
+  choices:[{en:"Gravity and swinging motion",ar:"الجاذبية والحركة الاهتزازية"},{en:"Magnetism",ar:"المغناطيسية"},{en:"Light",ar:"الضوء"},{en:"Static electricity",ar:"الكهرباء الساكنة"}],
+  why:{en:"Gravity pulls the ball to the lowest point, and its motion carries it past to the other side, again and again. A longer string swings more slowly.",ar:"الجاذبية تسحب الكرة لأخفض نقطة، وحركتها تكمل بها للجهة الثانية وهكذا. وكلما طال الخيط صار التأرجح أبطأ."}},
+ {icon:"💡", name:{en:"Battery and bulb",ar:"بطارية ومصباح"},
+  touch:{en:"A small cylinder with + and − ends, and some wires.",ar:"أسطوانة صغيرة لها طرف + وطرف −، ومعها أسلاك."},
+  look:{en:"The bulb only glows when the wires make a complete loop.",ar:"المصباح ما يضوي إلا لما الأسلاك تسوي دائرة كاملة."},
+  ai:{en:"Close my circle and I'll light up the night. Break it, and everything goes dark.",ar:"أغلق دائرتي أنوّر لك الليل.. افتحها ويصير كل شي ظلام."},
+  choices:[{en:"Closed electric circuit",ar:"الدائرة الكهربائية المغلقة"},{en:"Reflection",ar:"انعكاس الضوء"},{en:"Friction",ar:"الاحتكاك"},{en:"Buoyancy",ar:"الطفو"}],
+  why:{en:"Electric current only flows in a closed circuit. The battery's chemical energy becomes electrical energy, then light.",ar:"التيار الكهربائي لا يسري إلا في دائرة مغلقة، وطاقة البطارية الكيميائية تتحول إلى كهربائية ثم ضوئية."}}
+];
+
+/* ===================== UI TEXT ===================== */
+const T = {
+ en:{title:"Mystery Physics Box",subtitle:"Touch • Observe • Guess the physics!",langBtn:"عربي",howTitle:"How to play",
+  rules:["Mystery objects are hidden inside covered boxes.","On your turn, pick a box. The <b>AI robot</b> gives you a mysterious clue first.","Open the <b>touch</b> and <b>look</b> clues, then guess the physics concept.","Correct answer = <b>1 point</b>.","Explain the scientific reason = <b>2 bonus points</b> (the teacher decides)."],
+  teamsLbl:"Number of teams",boxesLbl:"Number of boxes",timerLbl:"Time per box",off:"Off",sec:"s",start:"Start the game ▶",
+  team:"Team",turn:"Turn:",aiLbl:"AI CLUE",touchBtn:"✋ Touch clue",lookBtn:"👀 Look clue",touchH:"✋ Touch",lookH:"👀 Look",
+  question:"Which physics concept is hidden in this box?",correct:"Correct! +1",wrong:"Not quite!",timeUp:"Time's up!",itWas:"It was:",
+  bonusTitle:"Bonus: explain the scientific reason (+2)",showWhy:"Show the answer",bonusYes:"✔ Explained well +2",bonusNo:"✖ No bonus",
+  nextTeam:"Next ▶",finishNow:"Finish game",again:"Play again",winner:"wins!",tie:"It's a tie!",box:"Box",
+  foot:"Made for the classroom smartboard. Works on any screen."},
+ ar:{title:"صندوق الفيزياء الغامض",subtitle:"المس • لاحظ • خمّن المفهوم!",langBtn:"English",howTitle:"طريقة اللعب",
+  rules:["أشياء غامضة مخبأة داخل صناديق مغلقة.","في دورك اختر صندوقًا، و<b>الروبوت الذكي</b> يعطيك تلميحًا غامضًا أولًا.","افتح تلميح <b>اللمس</b> وتلميح <b>الملاحظة</b> ثم خمّن المفهوم الفيزيائي.","الإجابة الصحيحة = <b>نقطة واحدة</b>.","شرح السبب العلمي = <b>نقطتان إضافيتان</b> (تقرّرها المعلمة)."],
+  teamsLbl:"عدد الفرق",boxesLbl:"عدد الصناديق",timerLbl:"الوقت لكل صندوق",off:"بدون",sec:"ث",start:"ابدأ اللعب ▶",
+  team:"فريق",turn:"الدور على:",aiLbl:"تلميح الذكاء الاصطناعي",touchBtn:"✋ تلميح اللمس",lookBtn:"👀 تلميح الملاحظة",touchH:"✋ اللمس",lookH:"👀 الملاحظة",
+  question:"ما المفهوم الفيزيائي المخبأ في هذا الصندوق؟",correct:"إجابة صحيحة! +1",wrong:"للأسف لا!",timeUp:"انتهى الوقت!",itWas:"الجواب:",
+  bonusTitle:"سؤال إضافي: اشرح السبب العلمي (+2)",showWhy:"أظهر الإجابة",bonusYes:"✔ شرح صحيح +2",bonusNo:"✖ بدون نقاط",
+  nextTeam:"التالي ▶",finishNow:"إنهاء اللعبة",again:"العب مرة ثانية",winner:"هو الفائز!",tie:"تعادل!",box:"صندوق",
+  foot:"مصممة لشاشة الصف الذكية، وتشتغل على أي شاشة."}
+};
+const TEAM_COLORS=["var(--t1)","var(--t2)","var(--t3)","var(--t4)"];
+const DEF_NAMES={en:["Red Team","Blue Team","Purple Team","Green Team"],ar:["الفريق الأحمر","الفريق الأزرق","الفريق البنفسجي","الفريق الأخضر"]};
+
+/* ===================== STATE ===================== */
+let lang="en", cfg={teams:2,boxes:8,timer:60}, names=[...DEF_NAMES.en];
+let G=null, cur=null, tHandle=null, typeHandle=null;
+const $=id=>document.getElementById(id);
+const t=k=>T[lang][k];
+
+function applyLang(){
+  document.documentElement.lang=lang; document.documentElement.dir=lang==="ar"?"rtl":"ltr";
+  document.querySelectorAll("[data-t]").forEach(el=>el.innerHTML=t(el.dataset.t));
+  $("rules").innerHTML=t("rules").map(r=>`<li>${r}</li>`).join("");
+  renderSetup(); if(G){renderBoard()}
+}
+function toggleLang(){
+  const old=lang; lang=lang==="en"?"ar":"en";
+  names=names.map((n,i)=>n===DEF_NAMES[old][i]?DEF_NAMES[lang][i]:n);
+  applyLang();
+}
+function opts(id,vals,key,fmt){
+  $(id).innerHTML=vals.map(v=>`<button class="opt ${cfg[key]===v?"sel":""}" onclick="cfg.${key}=${v};renderSetup()">${fmt(v)}</button>`).join("");
+}
+function renderSetup(){
+  opts("optTeams",[1,2,3,4],"teams",v=>v);
+  opts("optBoxes",[6,8,12],"boxes",v=>v);
+  opts("optTimer",[0,30,60,90],"timer",v=>v?v+t("sec"):t("off"));
+  $("teamNames").innerHTML=Array.from({length:cfg.teams},(_,i)=>
+    `<input style="border-color:${TEAM_COLORS[i]}" value="${names[i]}" oninput="names[${i}]=this.value">`).join("");
+}
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));window.scrollTo(0,0)}
+
+/* ===================== GAME ===================== */
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function startGame(){
+  audio();
+  const picks=shuffle(ITEMS).slice(0,cfg.boxes);
+  G={teams:Array.from({length:cfg.teams},(_,i)=>({name:names[i]||DEF_NAMES[lang][i],score:0,color:TEAM_COLORS[i]})),
+     boxes:picks.map(it=>({it,done:false,by:-1,order:shuffle([0,1,2,3])})),turn:0};
+  renderBoard(); show("sBoard");
+}
+function renderBoard(){
+  $("scores").innerHTML=G.teams.map((tm,i)=>`<div class="sc ${i===G.turn?"turn":""}"><span class="dot" style="background:${tm.color}"></span><span class="n">${esc(tm.name)}</span><span class="p">${tm.score}</span></div>`).join("");
+  const tm=G.teams[G.turn];
+  $("turnLbl").innerHTML=`${t("turn")} <span style="color:${tm.color}">${esc(tm.name)}</span>`;
+  $("board").innerHTML=G.boxes.map((b,i)=>`<div class="box ${b.done?"done":""}" onclick="openBox(${i})">
+    ${b.by>=0?`<span class="who" style="background:${G.teams[b.by].color}"></span>`:""}
+    <div class="lid"><i>${b.done?b.it.icon:i+1}</i><em>${b.done?b.it.name[lang]:"?"}</em></div></div>`).join("");
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+function openBox(i){
+  const b=G.boxes[i]; if(b.done) return;
+  cur={i,b,answered:false,bonusDone:false};
+  const tm=G.teams[G.turn];
+  $("pTitle").textContent=`${t("box")} ${i+1}`;
+  $("pTeam").innerHTML=`<span style="color:${tm.color}">●</span> ${esc(tm.name)}`;
+  const bb=$("bigBox"); bb.className="bigbox shake"; bb.innerHTML='<span class="q">?</span>';
+  $("objName").textContent="";
+  $("cTouch").className="clue"; $("cTouch").innerHTML=`<button onclick="clue('touch')">${t("touchBtn")}</button>`;
+  $("cLook").className="clue"; $("cLook").innerHTML=`<button onclick="clue('look')">${t("lookBtn")}</button>`;
+  $("choices").innerHTML=b.order.map(k=>`<button class="ch" data-k="${k}" onclick="answer(${k})">${b.it.choices[k][lang]}</button>`).join("");
+  $("result").className="result"; $("why").className="why"; $("why").textContent=b.it.why[lang];
+  $("bonusBtns").style.display=""; $("nextBtn").classList.remove("on");
+  $("mPlay").classList.add("on"); $("mPlay").scrollTop=0;
+  typeAI(b.it.ai[lang]);
+  startTimer();
+  beep(220,.15); setTimeout(()=>beep(330,.15),140);
+}
+function typeAI(text){
+  clearInterval(typeHandle); const el=$("aiText"); el.textContent=""; el.classList.add("cur");
+  let k=0; typeHandle=setInterval(()=>{el.textContent=text.slice(0,++k); if(k%3===0) beep(900+Math.random()*300,.02,.03);
+    if(k>=text.length){clearInterval(typeHandle);el.classList.remove("cur")}},38);
+}
+function clue(kind){
+  const box=kind==="touch"?$("cTouch"):$("cLook");
+  box.className="clue shown"; box.innerHTML=`<h4>${t(kind+"H")}</h4>${cur.b.it[kind][lang]}`; beep(520,.08);
+}
+function startTimer(){
+  clearInterval(tHandle); const total=cfg.timer;
+  $("timerWrap").style.display=total?"":"none"; if(!total) return;
+  let left=total; drawT(left,total);
+  tHandle=setInterval(()=>{left--; drawT(left,total); if(left<=5&&left>0) beep(700,.06);
+    if(left<=0){clearInterval(tHandle); if(!cur.answered) answer(-1)}},1000);
+}
+function drawT(left,total){$("tNum").textContent=left; $("tArc").style.strokeDashoffset=194.8*(1-left/total);
+  $("tArc").style.stroke=left<=10?"#ff5a6a":"#ffc94a"}
+
+function answer(k){
+  if(cur.answered) return; cur.answered=true; clearInterval(tHandle);
+  const ok=k===0, tm=G.teams[G.turn];
+  document.querySelectorAll(".ch").forEach(btn=>{btn.disabled=true; const kk=+btn.dataset.k;
+    if(kk===0) btn.classList.add("right"); else if(kk===k) btn.classList.add("wrong"); else btn.classList.add("dim")});
+  clue("touch"); clue("look");
+  const bb=$("bigBox"); bb.className="bigbox open"; bb.textContent=cur.b.it.icon;
+  $("objName").textContent=cur.b.it.name[lang];
+  const r=$("result"); r.className="result on "+(ok?"good":"bad");
+  $("resTitle").textContent=ok?t("correct"):(k<0?t("timeUp"):t("wrong"))+" "+t("itWas")+" "+cur.b.it.choices[0][lang];
+  if(ok){tm.score+=1; floatTxt("+1",tm.color); win(); confetti(60)} else lose();
+  cur.b.done=true; cur.b.by=G.turn; renderBoard();
+  $("nextBtn").classList.add("on");
+}
+function showWhy(){$("why").classList.add("on")}
+function bonus(yes){
+  if(cur.bonusDone) return; cur.bonusDone=true; showWhy(); $("bonusBtns").style.display="none";
+  if(yes){const tm=G.teams[G.turn]; tm.score+=2; floatTxt("+2",tm.color); win(); confetti(120); renderBoard()}
+}
+function closeBox(){
+  $("mPlay").classList.remove("on"); clearInterval(tHandle); clearInterval(typeHandle);
+  G.turn=(G.turn+1)%G.teams.length; renderBoard();
+  if(G.boxes.every(b=>b.done)) setTimeout(endGame,400);
+}
+function endGame(){
+  if(!G) return;
+  const ranked=[...G.teams].sort((a,b)=>b.score-a.score);
+  const tie=ranked.length>1&&ranked[0].score===ranked[1].score;
+  $("endTitle").innerHTML=tie?t("tie"):`🏆 <span style="color:${ranked[0].color}">${esc(ranked[0].name)}</span> ${t("winner")}`;
+  const medals=["🥇","🥈","🥉","🎖️"];
+  $("podium").innerHTML=ranked.map((tm,i)=>`<div class="pod" style="height:${230-i*30}px;border-top:6px solid ${tm.color}"><div class="m">${medals[i]}</div><div class="nm">${esc(tm.name)}</div><div class="pt">${tm.score}</div></div>`).join("");
+  show("sEnd"); confetti(260); fanfare();
+}
+
+/* ===================== FX ===================== */
+function floatTxt(s,color){const d=document.createElement("div");d.className="float";d.textContent=s;d.style.color=color;
+  d.style.left=(innerWidth/2-30)+"px";d.style.top=(innerHeight/2)+"px";document.body.appendChild(d);setTimeout(()=>d.remove(),1300)}
+let AC=null; function audio(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}
+function beep(f,d=.1,v=.08){if(!AC)return;const o=AC.createOscillator(),g=AC.createGain();o.type="triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(v,AC.currentTime);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+d)}
+function win(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.18,.1),i*90))}
+function lose(){[330,262].forEach((f,i)=>setTimeout(()=>beep(f,.3,.1),i*200))}
+function fanfare(){[523,523,659,784,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.22,.1),i*140))}
+const cv=$("fx"),cx=cv.getContext("2d");let parts=[];
+function resize(){cv.width=innerWidth;cv.height=innerHeight} addEventListener("resize",resize);resize();
+function confetti(n){const cols=["#ffc94a","#ff7a59","#4aa8ff","#b679ff","#3fd9a0","#fff"];
+  for(let i=0;i<n;i++)parts.push({x:innerWidth/2,y:innerHeight/3,vx:(Math.random()-.5)*16,vy:Math.random()*-14-4,s:6+Math.random()*6,c:cols[i%cols.length],r:Math.random()*6,vr:(Math.random()-.5)*.4,life:120});
+  if(parts.length===n)requestAnimationFrame(tick)}
+function tick(){cx.clearRect(0,0,cv.width,cv.height);parts.forEach(p=>{p.vy+=.45;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life--;
+  cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);cx.restore()});
+  parts=parts.filter(p=>p.life>0&&p.y<innerHeight+40); if(parts.length)requestAnimationFrame(tick); else cx.clearRect(0,0,cv.width,cv.height)}
+
+applyLang();
+</script>
+</body>
+</html>
