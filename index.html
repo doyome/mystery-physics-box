@@ -96,7 +96,13 @@ html[lang=ar] .lbl{letter-spacing:0}
 .floaters{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
 .floaters span{position:absolute;bottom:-80px;opacity:.16;animation:floatUp linear infinite;filter:drop-shadow(0 0 10px rgba(255,255,255,.4))}
 @keyframes floatUp{to{transform:translateY(-120vh) rotate(40deg)}}
-.logo3d{position:relative;width:210px;height:210px;margin:-18px auto -22px;perspective:800px;transform:scale(.8)}
+.logo3d{position:relative;width:200px;height:200px;margin:0 auto 4px}
+.hero-art{width:100%;height:100%;overflow:visible;animation:heroF 5s ease-in-out infinite}
+@keyframes heroF{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
+.hero-lid{transform-box:fill-box;transform-origin:50% 100%;animation:lidHop 3.6s ease-in-out infinite}
+@keyframes lidHop{0%,64%,100%{transform:none}72%{transform:translateY(-9px) rotate(-3deg)}80%{transform:translateY(-2px) rotate(1deg)}86%{transform:translateY(-5px)}}
+.hero-sp{animation:twk 2.4s ease-in-out infinite}
+@keyframes twk{50%{opacity:.35}}
 .cube{position:absolute;left:50%;top:50%;width:104px;height:104px;margin:-52px;transform-style:preserve-3d;animation:spin 14s linear infinite}
 .cube b{position:absolute;inset:0;display:grid;place-items:center;font:900 54px var(--fd);color:#fff;border-radius:16px;
   background:linear-gradient(135deg,rgba(255,79,216,.28),rgba(52,231,255,.18));border:2px solid rgba(255,255,255,.75);
@@ -124,9 +130,10 @@ html[lang=ar] .mega{font-family:var(--fa);letter-spacing:0;line-height:1.3}
   box-shadow:0 14px 40px rgba(0,0,0,.3)}
 .credit .ribbon{display:inline-block;margin-bottom:6px;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#1a0b33;background:linear-gradient(90deg,var(--gd),#ffe69a)}
 html[lang=ar] .credit .ribbon{letter-spacing:0}
-.credit .ribbon .l-en,.credit .ribbon .l-ar{display:inline}
-.credit .ribbon .l-ar{margin-inline-start:.5em;font-size:1em}
-.credit b{color:var(--gd)}
+.credit .ribbon{display:inline-flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:2px 7px;max-width:100%}
+.credit .ribbon [lang=ar]{font-family:var(--fa);letter-spacing:0;font-size:1.05em}
+.credit .rsep{opacity:.6}
+.credit b{color:var(--gd);white-space:nowrap}
 .credit .cl{display:block}
 .credit .cl+.cl{margin-top:2px}
 .credit .dash{opacity:.5;margin:0 .35em}
@@ -232,7 +239,7 @@ html[lang=ar] .tsmall{letter-spacing:0}
 .mbox.done .mface{background:linear-gradient(165deg,#1d1648,#110b2e);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
 .mbox.done .mface:before{display:none}
 .mico{font-size:clamp(34px,4vw,48px);line-height:1;filter:drop-shadow(0 0 14px var(--tcg))}
-.mname{font-size:12.5px;color:#cfc8f5;text-align:center;padding:4px 8px 0;line-height:1.25;font-weight:600}
+.mname{font-size:11.5px;color:#cfc8f5;text-align:center;padding:4px 8px 0;line-height:1.25;font-weight:600}
 .mname .l-ar{font-size:.95em}
 .mbox .who{position:absolute;top:9px;inset-inline-end:10px;width:13px;height:13px;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c);z-index:2}
 .mbox.opening{animation:boxOpen .3s ease-in forwards}
@@ -242,7 +249,7 @@ html[lang=ar] .tsmall{letter-spacing:0}
 .chip i{font-style:normal}
 .chip .l-ar{margin-top:0}
 .lbp{position:sticky;top:16px}
-.lbp h3{justify-content:space-between}
+.lbp h3{justify-content:flex-start;font-size:18px}
 .lb{position:relative;transition:height .4s}
 .lbr{--c:#fff;position:absolute;left:0;right:0;top:0;display:grid;grid-template-columns:28px 40px 1fr auto;align-items:center;gap:8px;padding:6px 8px;border-radius:14px;
   transition:transform .8s cubic-bezier(.3,1.35,.5,1),background .3s,box-shadow .3s}
@@ -440,7 +447,7 @@ html[lang=ar] .res-h h3{font-family:var(--fa)}
 @keyframes floatUpT{0%{transform:translate(-50%,0) scale(.4);opacity:0}20%{transform:translate(-50%,-30px) scale(1.2);opacity:1}100%{transform:translate(-50%,-150px) scale(1);opacity:0}}
 .combo{--c:#ffcc4d;position:fixed;left:50%;top:36%;z-index:96;pointer-events:none;text-align:center;transform:translate(-50%,-50%);animation:comboIn 2.2s cubic-bezier(.2,1.4,.4,1) forwards}
 .combo b{display:block;font:900 clamp(44px,8vw,92px) var(--fd);background:linear-gradient(90deg,#ffd166,#ff8a3d,#ff4fd8);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 22px rgba(255,138,61,.8))}
-.combo span{display:inline-block;margin-top:4px;padding:5px 16px;border-radius:999px;background:rgba(0,0,0,.5);border:1.5px solid var(--c);font-weight:800;font-size:18px}
+.combo > span{display:inline-block;margin-top:4px;padding:5px 16px;border-radius:999px;background:rgba(0,0,0,.5);border:1.5px solid var(--c);font-weight:800;font-size:18px}
 @keyframes comboIn{0%{transform:translate(-50%,-50%) scale(.2) rotate(-10deg);opacity:0}18%{transform:translate(-50%,-50%) scale(1.1) rotate(2deg);opacity:1}80%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-70%) scale(.9);opacity:0}}
 
 /* ---------- END ---------- */
@@ -479,6 +486,34 @@ html[lang=ar] .endt{font-family:var(--fa)}
 .stats{margin:12px auto 0;color:#d6cff8;font-size:15px;line-height:1.5}
 .endbtns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:20px 0 4px}
 
+
+.l-ar .eq,html[lang=ar] .eq{font-family:var(--fa)}
+/* illustrations */
+.art{display:block;width:100%;height:100%;overflow:visible}
+.emo{display:grid;place-items:center;width:100%;height:100%;font-size:5em;line-height:1}
+.item{width:176px;height:176px;font-size:22px;bottom:54px}
+.mico{display:block;flex:0 0 auto;width:clamp(46px,4.4vw,60px);height:clamp(46px,4.4vw,60px);font-size:10px;filter:drop-shadow(0 0 12px var(--tcg))}
+.mq{display:block;width:62%;max-width:112px;margin-top:-6px;background:none;-webkit-background-clip:border-box;background-clip:border-box;filter:none;font-size:inherit}
+.mq svg{display:block;width:100%;height:auto;overflow:visible}
+.mbox:not(.done) .mface{justify-content:flex-start;padding-top:24px}
+.mbox:not(.done) .mface:before{display:none}
+.floaters span{height:auto}
+.floaters span .art{width:100%;height:auto}
+.whyrow{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.whytxt{flex:1;min-width:220px}
+.dgm{flex:0 0 220px;width:220px;max-width:100%;height:auto;background:rgba(255,255,255,.04);border-radius:14px;border:1px solid rgba(255,255,255,.1)}
+.dgm .d-i,.dgm .d-r{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .9s ease-out forwards}
+.dgm .d-r{animation-delay:.9s}
+.dgm .d-a{opacity:0;animation:fadeA .5s 1.8s forwards}
+.dgm .d-n{opacity:0;animation:fadeA .4s .1s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fadeA{to{opacity:1}}
+.dgm .d-car{animation:dcar 5s linear infinite}
+@keyframes dcar{0%{transform:translateX(0)}80%,100%{transform:translateX(180px)}}
+.dgm .d-hand{transform-origin:40px 44px;animation:dhand 5s linear infinite}
+@keyframes dhand{0%{transform:rotate(0)}80%,100%{transform:rotate(360deg)}}
+@media(max-width:760px){.item{width:146px;height:146px}}
+@media(max-width:600px){.mface .chip{padding:4px 7px;font-size:13px}.mface .chip>span{display:none}.mbox:not(.done) .mface{padding-top:20px}.mq{width:70%}.mname{font-size:10.5px}}
 /* ---------- responsive ---------- */
 @media(max-width:760px){
   .screen{padding:68px 12px 26px}
@@ -486,7 +521,7 @@ html[lang=ar] .endt{font-family:var(--fa)}
   .tools{top:10px;inset-inline-end:10px}
   .seg button{padding:6px 9px;font-size:13px}
   .title-wrap{padding-top:30px}
-  .logo3d{transform:scale(.7);margin:-30px auto -34px}
+  .logo3d{width:150px;height:150px}
   .specimen{height:250px}
   .item{font-size:92px}
   .podium{gap:8px;min-height:290px}
@@ -506,7 +541,7 @@ html[lang=ar] .endt{font-family:var(--fa)}
 <body class="both">
 <canvas id="bg"></canvas>
 <canvas id="fx"></canvas>
-<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="tg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34e7ff"/><stop offset=".5" stop-color="#8b5cf6"/><stop offset="1" stop-color="#ff4fd8"/></linearGradient></defs></svg>
+<svg width="0" height="0" style="position:absolute" id="artDefs"><defs><linearGradient id="aM" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c9d1e6"/><stop offset="1" stop-color="#66708f"/></linearGradient><linearGradient id="aGd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2b0"/><stop offset="0.5" stop-color="#ffc23d"/><stop offset="1" stop-color="#b86e00"/></linearGradient><linearGradient id="aR" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9aaa"/><stop offset="0.5" stop-color="#f0405e"/><stop offset="1" stop-color="#9e1535"/></linearGradient><linearGradient id="aB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a8e8ff"/><stop offset="0.5" stop-color="#3a8dff"/><stop offset="1" stop-color="#1d45b8"/></linearGradient><linearGradient id="aP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffc0f2"/><stop offset="0.5" stop-color="#f05bd0"/><stop offset="1" stop-color="#9c1f86"/></linearGradient><linearGradient id="aG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a6ffd9"/><stop offset="0.5" stop-color="#2fd894"/><stop offset="1" stop-color="#0d7d52"/></linearGradient><linearGradient id="aV" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9c9ff"/><stop offset="0.5" stop-color="#8b5cf6"/><stop offset="1" stop-color="#4b22b0"/></linearGradient><linearGradient id="aO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd9a6"/><stop offset="0.5" stop-color="#ff8a3d"/><stop offset="1" stop-color="#b9490b"/></linearGradient><linearGradient id="aW" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6c793"/><stop offset="0.5" stop-color="#c98345"/><stop offset="1" stop-color="#7f461a"/></linearGradient><linearGradient id="aDk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6a7092"/><stop offset="1" stop-color="#23263a"/></linearGradient><linearGradient id="aGl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0fcff"/><stop offset="0.5" stop-color="#9adfff"/><stop offset="1" stop-color="#3d8fd8"/></linearGradient><linearGradient id="aPa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffdf6"/><stop offset="1" stop-color="#e8dcbf"/></linearGradient><linearGradient id="aSk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6cc"/><stop offset="1" stop-color="#eaa97c"/></linearGradient><linearGradient id="aC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d8d1f4"/></linearGradient><linearGradient id="aWa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b4f0ff" stop-opacity="0.8"/><stop offset="1" stop-color="#2f8ff0" stop-opacity="0.6"/></linearGradient><linearGradient id="aGs" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff" stop-opacity="0.6"/><stop offset="0.5" stop-color="#c4eeff" stop-opacity="0.3"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.5"/></linearGradient><radialGradient id="aYg" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff9d6" stop-opacity="1"/><stop offset="0.45" stop-color="#ffd23d" stop-opacity="0.7"/><stop offset="1" stop-color="#ff9f1a" stop-opacity="0"/></radialGradient><linearGradient id="aFe" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="0.6" stop-color="#ddd2ff"/><stop offset="1" stop-color="#a58cff"/></linearGradient><linearGradient id="aMir" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eef8ff"/><stop offset="0.5" stop-color="#a6c8ff"/><stop offset="1" stop-color="#6a7ed8"/></linearGradient><radialGradient id="aSp" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#5d6888"/><stop offset="0.7" stop-color="#a9b4d0"/><stop offset="1" stop-color="#f2f5ff"/></radialGradient><radialGradient id="aSky" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#f2fbff"/><stop offset="0.55" stop-color="#86c8ff"/><stop offset="1" stop-color="#3460c8"/></radialGradient><linearGradient id="aRock" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a59ad6"/><stop offset="1" stop-color="#3c3270"/></linearGradient><linearGradient id="aFib" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d4fbff" stop-opacity="0.75"/><stop offset="0.5" stop-color="#34c8ff" stop-opacity="0.45"/><stop offset="1" stop-color="#1d5fd0" stop-opacity="0.75"/></linearGradient><radialGradient id="aBulb" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#fffdf0"/><stop offset="0.5" stop-color="#ffe580"/><stop offset="1" stop-color="#ffb23d"/></radialGradient><linearGradient id="aPr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e6fbff" stop-opacity="0.75"/><stop offset="0.5" stop-color="#9ae6ff" stop-opacity="0.35"/><stop offset="1" stop-color="#b49cff" stop-opacity="0.5"/></linearGradient><radialGradient id="aLens" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#f6feff"/><stop offset="0.7" stop-color="#c4efff"/><stop offset="1" stop-color="#7cc4ff"/></radialGradient><linearGradient id="aEgg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fffcf4"/><stop offset="1" stop-color="#ecd3ad"/></linearGradient><linearGradient id="aIce" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6feff" stop-opacity="0.95"/><stop offset="0.5" stop-color="#b2efff" stop-opacity="0.9"/><stop offset="1" stop-color="#58c3ef" stop-opacity="0.9"/></linearGradient><linearGradient id="aCrB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f30b8"/><stop offset="1" stop-color="#1f1060"/></linearGradient><linearGradient id="aCrL" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a68ff"/><stop offset="1" stop-color="#4a28b8"/></linearGradient><filter id="aDrop" x="-25%" y="-25%" width="150%" height="160%"><feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#070318" flood-opacity=".55"/></filter><linearGradient id="tg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34e7ff"/><stop offset=".5" stop-color="#8b5cf6"/><stop offset="1" stop-color="#ff4fd8"/></linearGradient></defs></svg>
 
 <!-- toolbar -->
 <div class="tools">
@@ -523,11 +558,7 @@ html[lang=ar] .endt{font-family:var(--fa)}
 <section class="screen on" id="sTitle">
   <div class="floaters" id="floaters"></div>
   <div class="title-wrap">
-    <div class="logo3d">
-      <div class="cube-glow"></div>
-      <div class="orbit"><i></i></div><div class="orbit o2"><i></i></div>
-      <div class="cube"><b class="f1">?</b><b class="f2">?</b><b class="f3">?</b><b class="f4">?</b><b class="f5">?</b><b class="f6">?</b></div>
-    </div>
+    <div class="logo3d" id="hero"></div>
     <h1 class="mega" data-t="title"></h1>
     <p class="tagline" data-t="tag"></p>
     <button class="cta" onclick="toSetup()"><span data-t="launch"></span> <kbd>Enter</kbd></button>
@@ -575,7 +606,7 @@ html[lang=ar] .endt{font-family:var(--fa)}
   <div class="bgrid">
     <div class="board" id="board"></div>
     <aside class="panel lbp">
-      <h3><span>🏆 <span data-ti="lbT"></span></span></h3>
+      <h3><span>🏆</span><span data-t="lbT" style="flex:1"></span></h3>
       <div class="lb" id="lb"></div>
       <div class="lbfoot"><button class="ghost" id="finBtn" onclick="finishAsk()" data-t="finish"></button></div>
     </aside>
@@ -851,6 +882,276 @@ const ITEMS=[
  w:["Most liquids expand when they get warmer. The liquid takes up more space, so it rises up the thin tube.","معظم السوائل تتمدد عند تسخينها، فيشغل السائل حيزاً أكبر ويرتفع في الأنبوب الرفيع."]}
 ];
 
+/* ============================== ILLUSTRATIONS ==============================
+   Hand-built inline SVG art, one per object (viewBox 0 0 200 200). Shared gradients/filters live in #artDefs. */
+const FONT='font-family="Outfit,Segoe UI,Arial,sans-serif"';
+function S(inner){return `<svg class="art" viewBox="0 0 200 200" aria-hidden="true"><ellipse cx="100" cy="186" rx="64" ry="8" fill="#000" opacity=".35"/><g filter="url(#aDrop)" stroke="#1b0f3d" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">${inner}</g></svg>`}
+const HL=(x,y,w,h,r=3,o=.4)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="#fff" opacity="${o}" stroke="none"/>`;
+const ARW=(d,col,w=5)=>`<path d="${d}" fill="none" stroke="${col}" stroke-width="${w}"/>`;
+function car(x,y,s,g){return `<g transform="translate(${x} ${y}) scale(${s})">
+ <path d="M0 40q0-15 15-17l12-17q4-6 12-6h30q8 0 12 6l13 17q16 2 16 17v10H0z" fill="url(#${g})"/>
+ <path d="M34 22l8-12h16v12zM64 22V10h14l8 12z" fill="url(#aGl)"/>
+ ${HL(8,28,92,4,2,.35)}<rect x="100" y="30" width="9" height="6" rx="2" fill="#fff6a0"/><rect x="1" y="30" width="6" height="6" rx="2" fill="#ff5577"/>
+ <circle cx="24" cy="50" r="13" fill="#262a3d"/><circle cx="24" cy="50" r="5" fill="url(#aM)"/>
+ <circle cx="88" cy="50" r="13" fill="#262a3d"/><circle cx="88" cy="50" r="5" fill="url(#aM)"/></g>`}
+function train(x,y,g){return `<g transform="translate(${x} ${y})">
+ <path d="M-6 58h124" stroke="#8a90b0" stroke-width="4"/>${[6,26,46,66,86,106].map(v=>`<path d="M${v} 54v8" stroke="#8a90b0" stroke-width="3"/>`).join("")}
+ <rect x="0" y="0" width="36" height="44" rx="7" fill="url(#${g})"/><rect x="6" y="6" width="24" height="14" rx="3" fill="url(#aGl)"/>
+ <rect x="30" y="16" width="70" height="28" rx="10" fill="url(#${g})"/>${HL(36,20,58,5,2.5,.35)}
+ <rect x="74" y="1" width="12" height="17" rx="3" fill="url(#aDk)"/><path d="M100 30l12 14h-12z" fill="url(#aM)"/>
+ <rect x="-2" y="40" width="104" height="6" rx="3" fill="url(#aDk)"/>
+ ${[16,50,82].map(c=>`<circle cx="${c}" cy="48" r="9" fill="#262a3d"/><circle cx="${c}" cy="48" r="3.5" fill="url(#aM)" stroke="none"/>`).join("")}</g>`}
+const ART={
+"Stopwatch & toy car":S(`
+ <rect x="58" y="12" width="20" height="14" rx="4" fill="url(#aM)"/><rect x="96" y="30" width="12" height="10" rx="3" fill="url(#aM)" transform="rotate(40 102 35)"/>
+ <circle cx="68" cy="70" r="44" fill="url(#aGd)"/><circle cx="68" cy="70" r="35" fill="url(#aC)"/>
+ <path d="M68 39v8M68 93v8M37 70h8M91 70h8" stroke="#3a2f6b" stroke-width="3"/>
+ <path d="M68 70V46" stroke="#f0405e" stroke-width="4"/><path d="M68 70l18 8" stroke="#2a1f5a" stroke-width="4"/><circle cx="68" cy="70" r="4" fill="#2a1f5a"/>
+ <path d="M42 52a32 32 0 0 1 24-17" stroke="#fff" stroke-width="5" opacity=".7" fill="none"/>
+ ${ARW("M12 136h34M22 150h30M8 164h40","#34e7ff")}${car(72,122,1,"aR")}`),
+"Distance–time graph":S(`<g transform="rotate(-5 100 100)">
+ <rect x="24" y="24" width="154" height="144" rx="16" fill="url(#aC)"/>
+ <path d="M50 122h108M50 98h108M50 74h108M78 52v94M106 52v94M134 52v94" stroke="#cfc6ef" stroke-width="1.5" fill="none"/>
+ <path d="M50 50v96h110" fill="none" stroke="#2a1f5a" stroke-width="4"/><path d="M44 58l6-9 6 9M152 140l9 6-9 6" fill="none" stroke="#2a1f5a" stroke-width="4"/>
+ <path d="M50 146L120 60" stroke="#f05bd0" stroke-width="7" fill="none"/><path d="M50 146l106-38" stroke="#2bb8e8" stroke-width="7" fill="none"/>
+ <circle cx="120" cy="60" r="7" fill="#f05bd0"/><circle cx="156" cy="108" r="7" fill="#2bb8e8"/>
+ <text x="32" y="66" font-size="17" font-weight="800" fill="#2a1f5a" stroke="none" ${FONT}>d</text><text x="152" y="164" font-size="17" font-weight="800" fill="#2a1f5a" stroke="none" ${FONT}>t</text>
+ <text x="126" y="56" font-size="13" font-weight="800" fill="#c0309f" stroke="none" ${FONT}>fast</text><text x="128" y="98" font-size="13" font-weight="800" fill="#1d86b0" stroke="none" ${FONT}>slow</text></g>`),
+"Ticker tape":S(`<g transform="rotate(-14 100 110)">
+ <path d="M14 94h172l-7 14 7 14H14z" fill="url(#aPa)"/>${HL(18,98,160,4,2,.6)}
+ ${[34,40,48,58,72,90,112,140,172].map(x=>`<circle cx="${x}" cy="108" r="4.5" fill="#3a2f6b" stroke="none"/>`).join("")}
+ ${ARW("M70 78h88M148 70l10 8-10 8","#34e7ff")}</g>
+ <rect x="4" y="112" width="52" height="46" rx="10" fill="url(#aV)"/><circle cx="30" cy="135" r="10" fill="url(#aM)"/><circle cx="30" cy="135" r="3" fill="#2a1f5a" stroke="none"/>
+ <path d="M14 112l6-10M46 112l-6-10" stroke="#c3cbe0" stroke-width="3"/>`),
+"Two toy trains":S(`${train(26,34,"aB")}${train(26,106,"aP")}
+ ${ARW("M146 52h34M170 43l10 9-10 9","#34e7ff")}${ARW("M146 124h34M170 115l10 9-10 9","#ff4fd8")}`),
+"Coin, card & glass":S(`
+ <path d="M58 92l12 84h60l12-84z" fill="url(#aGs)"/><path d="M68 100l8 68" stroke="#fff" stroke-width="5" opacity=".5" fill="none"/>
+ <ellipse cx="100" cy="92" rx="42" ry="7" fill="url(#aGs)"/>
+ ${ARW("M100 104v30M91 124l9 10 9-10","#34e7ff",4)}
+ <path d="M80 70v6a20 7 0 0 0 40 0v-6" fill="#c27a00"/><ellipse cx="100" cy="70" rx="20" ry="7" fill="url(#aGd)"/>
+ <g transform="rotate(-9 158 66)"><rect x="120" y="60" width="76" height="12" rx="3" fill="url(#aR)"/>${HL(124,62,66,3,1.5,.5)}</g>
+ ${ARW("M98 46h22M92 56h20","#ffcc4d",4)}`),
+"Toy car & towel":S(`
+ <path d="M12 156h176v24H12z" fill="url(#aG)"/>
+ <path d="M12 164h176M12 172h176" stroke="#fff" opacity=".4" stroke-width="3"/>
+ ${Array.from({length:18},(_,i)=>`<circle cx="${18+i*10}" cy="157" r="3" fill="#7dffc8" stroke="none" opacity=".7"/>`).join("")}
+ ${car(46,98,1,"aB")}
+ ${ARW("M44 140H10M20 132l-10 8 10 8","#ff5577",6)}<text x="22" y="124" font-size="18" font-weight="800" fill="#ff8fa0" stroke="none" ${FONT}>f</text>
+ ${ARW("M72 82h80M142 74l10 8-10 8","#34e7ff")}`),
+"Balloon rocket":S(`
+ <path d="M2 52h196" stroke="#e8e2ff" stroke-width="2" fill="none"/>
+ <ellipse cx="112" cy="114" rx="58" ry="36" fill="url(#aP)"/><path d="M56 107l-18-9v28l18-8z" fill="#c02c9b"/>
+ <ellipse cx="128" cy="98" rx="24" ry="8" fill="#fff" opacity=".4" stroke="none"/>
+ <rect x="70" y="44" width="72" height="16" rx="8" fill="url(#aO)"/>${HL(74,47,64,3,1.5,.5)}
+ <rect x="86" y="56" width="10" height="30" fill="#fff" opacity=".85"/><rect x="118" y="56" width="10" height="30" fill="#fff" opacity=".85"/>
+ <circle cx="26" cy="112" r="9" fill="#bff6ff" opacity=".75" stroke="none"/><circle cx="12" cy="102" r="6" fill="#bff6ff" opacity=".6" stroke="none"/><circle cx="12" cy="124" r="5" fill="#bff6ff" opacity=".5" stroke="none"/>
+ ${ARW("M120 28h60M170 20l10 8-10 8","#34e7ff")}`),
+"Feather & coin":S(`<g transform="rotate(-18 70 100)">
+ <path d="M70 26c30 20 34 80 6 134-24-40-30-90-6-134z" fill="url(#aFe)"/>
+ <path d="M70 30c8 46 10 86 4 146" stroke="#f4f0ff" fill="none" stroke-width="3"/>
+ <path d="M74 56l14-6M76 76l16-6M77 96l16-6M77 116l14-6M72 66l-14-8M74 88l-16-8M74 110l-14-8M74 132l-12-8" stroke="#8f78e0" stroke-width="2" fill="none"/></g>
+ <circle cx="146" cy="66" r="28" fill="url(#aGd)"/><circle cx="146" cy="66" r="19" fill="none" stroke="#c27a00" stroke-width="3"/>
+ <path d="M146 54l4 8 8 1-6 6 2 8-8-4-8 4 2-8-6-6 8-1z" fill="#fff3b0" stroke="none"/>
+ ${ARW("M146 104v62M136 154l10 12 10-12","#34e7ff")}`),
+"Plane mirror":S(`
+ <path d="M70 178l30-28 30 28" fill="none" stroke="#c27a00" stroke-width="7"/>
+ <rect x="46" y="16" width="108" height="150" rx="54" fill="url(#aGd)"/><rect x="58" y="28" width="84" height="126" rx="42" fill="url(#aMir)"/>
+ <path d="M76 60l36-20M74 86l50-32" stroke="#fff" stroke-width="7" opacity=".55" fill="none"/>
+ <text x="-100" y="132" transform="scale(-1 1)" text-anchor="middle" font-size="36" font-weight="900" fill="#4a3aa8" opacity=".75" stroke="none" ${FONT}>R</text>
+ <circle cx="100" cy="16" r="7" fill="url(#aP)"/>`),
+"Laser & protractor":S(`
+ <path d="M40 150a60 60 0 0 1 120 0z" fill="#7ee8ff" opacity=".22"/><path d="M58 150a42 42 0 0 1 84 0" fill="none" stroke="#7ee8ff" stroke-width="2" opacity=".7"/>
+ <rect x="16" y="150" width="168" height="14" rx="4" fill="url(#aM)"/>
+ <path d="M100 150V38" stroke="#fff" stroke-dasharray="6 6" stroke-width="3" fill="none"/>
+ <path d="M44 66l56 84 56-84" fill="none" stroke="#ff3b5c" stroke-width="11" opacity=".3"/>
+ <path d="M44 66l56 84 56-84" fill="none" stroke="#ff4d6d" stroke-width="4"/>${ARW("M143 70l13-4 1 14","#ff4d6d",4)}
+ <path d="M100 122a28 28 0 0 0-15.5 4.7M100 122a28 28 0 0 1 15.5 4.7" fill="none" stroke="#ffcc4d" stroke-width="3"/>
+ <text x="72" y="114" font-size="13" font-weight="800" fill="#ffcc4d" stroke="none" ${FONT}>30°</text><text x="106" y="114" font-size="13" font-weight="800" fill="#ffcc4d" stroke="none" ${FONT}>30°</text>
+ <g transform="rotate(56 44 66)"><rect x="-4" y="58" width="48" height="16" rx="6" fill="url(#aDk)"/><rect x="38" y="60" width="8" height="12" fill="url(#aM)"/></g>`),
+"Periscope":S(`
+ <path d="M44 26h80v104h54v44H80V70H44z" fill="url(#aB)"/>${HL(88,76,7,50,3.5,.3)}
+ <rect x="38" y="32" width="10" height="32" rx="3" fill="#0b1638"/><rect x="174" y="136" width="10" height="32" rx="3" fill="#0b1638"/>
+ <path d="M86 32l32 32M86 136l32 32" stroke="#e8f4ff" stroke-width="7"/>
+ <path d="M6 48h96v104h86" fill="none" stroke="#ffe066" stroke-width="4" stroke-dasharray="9 6"/>${ARW("M182 144l10 8-10 8","#ffe066",4)}`),
+"Kaleidoscope":S(`<g transform="rotate(-22 100 104)">
+ <rect x="8" y="90" width="18" height="28" rx="6" fill="url(#aDk)"/>
+ <rect x="22" y="80" width="126" height="48" rx="12" fill="url(#aV)"/><rect x="46" y="80" width="10" height="48" fill="url(#aGd)"/><rect x="112" y="80" width="10" height="48" fill="url(#aGd)"/>${HL(30,86,110,7,3.5,.35)}</g>
+ <circle cx="148" cy="84" r="34" fill="url(#aDk)"/>
+ ${Array.from({length:6},(_,k)=>{const a1=k*Math.PI/3,a2=a1+Math.PI/3,cx=148,cy=84,r=27,col=["#ff4fd8","#34e7ff","#ffcc4d","#3cf2a5","#a78bfa","#ff8a5b"][k];
+   return `<path d="M${cx} ${cy}L${(cx+r*Math.cos(a1)).toFixed(1)} ${(cy+r*Math.sin(a1)).toFixed(1)}L${(cx+r*Math.cos(a2)).toFixed(1)} ${(cy+r*Math.sin(a2)).toFixed(1)}z" fill="${col}" stroke="#fff" stroke-width="1.2"/>`}).join("")}
+ <circle cx="148" cy="84" r="9" fill="#fff" stroke="none"/>
+ ${[[40,166,"#ff4fd8"],[58,174,"#34e7ff"],[76,168,"#ffcc4d"]].map(([x,y,c])=>`<circle cx="${x}" cy="${y}" r="6" fill="${c}"/>`).join("")}`),
+"Shiny spoon (concave mirror)":S(`<g transform="rotate(35 100 100)">
+ <path d="M94 112q-2 40 2 74h10q4-34 0-74z" fill="url(#aM)"/>
+ <ellipse cx="100" cy="68" rx="38" ry="52" fill="url(#aM)"/><ellipse cx="100" cy="70" rx="30" ry="43" fill="url(#aSp)"/>
+ <g transform="translate(0 4)"><circle cx="100" cy="72" r="15" fill="url(#aSk)" stroke-width="1.5"/>
+ <circle cx="94" cy="78" r="2.2" fill="#2a1f5a" stroke="none"/><circle cx="106" cy="78" r="2.2" fill="#2a1f5a" stroke="none"/>
+ <path d="M93 66q7-7 14 0" stroke="#c0305a" stroke-width="2.5" fill="none"/><path d="M88 80q12 14 24 0" stroke="#6b3a1e" stroke-width="4" fill="none"/></g>
+ <path d="M76 44q8-14 22-18" stroke="#fff" stroke-width="5" opacity=".7" fill="none"/></g>`),
+"Car side mirror (convex)":S(`
+ <path d="M46 178l22-44 20 8-22 40z" fill="url(#aDk)"/>
+ <path d="M42 64q4-34 50-34h66q30 0 30 40v36q0 40-36 40H82q-40 0-40-40z" fill="url(#aR)"/>
+ <rect x="54" y="42" width="122" height="92" rx="32" fill="url(#aSky)"/>
+ <path d="M90 134l20-40h12l20 40z" fill="#4a4f6a" opacity=".55" stroke="none"/><path d="M116 100v28" stroke="#fff" stroke-width="2" stroke-dasharray="4 4" opacity=".7"/>
+ <rect x="108" y="104" width="18" height="9" rx="3" fill="#ff4d6d" stroke-width="1.2"/>
+ <path d="M68 58q20-12 52-12" stroke="#fff" stroke-width="6" opacity=".75" fill="none"/>`),
+"Bicycle reflector":S(`
+ <rect x="92" y="148" width="16" height="30" rx="4" fill="url(#aM)"/><rect x="58" y="172" width="84" height="10" rx="5" fill="url(#aDk)"/>
+ <circle cx="104" cy="96" r="58" fill="url(#aR)"/>
+ ${(()=>{let o="";for(let gx=-3;gx<=3;gx++)for(let gy=-3;gy<=3;gy++){const x=104+gx*16+(gy%2?8:0),y=96+gy*14;if(Math.hypot(x-104,y-96)<46){o+=`<path d="M${x} ${y-7}l6 3.5v7l-6 3.5-6-3.5v-7z" fill="#ff8fa0" opacity=".45" stroke="#ffd0d8" stroke-width="1"/>`}}return o})()}
+ <circle cx="104" cy="96" r="52" fill="none" stroke="#fff" opacity=".25" stroke-width="5"/><ellipse cx="80" cy="66" rx="18" ry="9" fill="#fff" opacity=".35" stroke="none" transform="rotate(-30 80 66)"/>
+ ${ARW("M6 30l46 30","#ffe066")}${ARW("M42 74L6 50M8 62l-2-12 12-1","#fff3a0")}`),
+"Clap & echo":S(`
+ <path d="M140 24h58v160h-84l12-40-10-30 16-30z" fill="url(#aRock)"/><path d="M148 70l20 10M136 120l26 8M156 154l24 4" stroke="#9d94cf" stroke-width="3" fill="none"/>
+ ${[26,46,66].map(r=>`<path d="M${(40+r*.77).toFixed(1)} ${(112-r*.64).toFixed(1)}A${r} ${r} 0 0 1 ${(40+r*.77).toFixed(1)} ${(112+r*.64).toFixed(1)}" stroke="#34e7ff" stroke-width="5" fill="none"/>`).join("")}
+ ${[18,36].map(r=>`<path d="M${(124-r*.77).toFixed(1)} ${(112-r*.64).toFixed(1)}A${r} ${r} 0 0 0 ${(124-r*.77).toFixed(1)} ${(112+r*.64).toFixed(1)}" stroke="#ff4fd8" stroke-width="4" stroke-dasharray="6 5" fill="none"/>`).join("")}
+ <rect x="12" y="92" width="36" height="18" rx="5" fill="url(#aW)" transform="rotate(-24 30 101)"/><rect x="12" y="116" width="36" height="18" rx="5" fill="url(#aW)" transform="rotate(18 30 125)"/>
+ <path d="M8 84l-4-8M22 80v-9M2 100h-0" stroke="#ffe066" stroke-width="3"/>`),
+"Optical fibre":S(`<g transform="rotate(-35 100 105)">
+ <rect x="12" y="86" width="182" height="38" rx="19" fill="#34e7ff" opacity=".16" stroke="none"/>
+ <rect x="22" y="92" width="164" height="26" rx="13" fill="url(#aFib)"/>
+ <polyline points="26,105 44,95 64,115 84,95 104,115 124,95 144,115 164,95 182,105" fill="none" stroke="#fff6a0" stroke-width="3.5"/>
+ <rect x="4" y="88" width="28" height="34" rx="7" fill="url(#aM)"/><circle cx="188" cy="105" r="22" fill="url(#aYg)" stroke="none"/></g>
+ <path d="M164 30l4 10 10 4-10 4-4 10-4-10-10-4 10-4z" fill="#fff" stroke="none"/>`),
+"Magnet":S(`
+ <path d="M64 46c0-36 72-36 72 0M54 46c-6-52 98-52 92 0" stroke="#34e7ff" stroke-dasharray="6 6" fill="none" stroke-width="3"/>
+ <path d="M48 50h40v62a12 12 0 0 0 24 0V50h40v62a52 52 0 0 1-104 0z" fill="url(#aR)"/>
+ <rect x="48" y="50" width="40" height="22" fill="url(#aM)"/><rect x="112" y="50" width="40" height="22" fill="url(#aM)"/>
+ <text x="68" y="67" text-anchor="middle" font-size="16" font-weight="900" fill="#2a1f5a" stroke="none" ${FONT}>N</text><text x="132" y="67" text-anchor="middle" font-size="16" font-weight="900" fill="#2a1f5a" stroke="none" ${FONT}>S</text>
+ <path d="M58 80v32a42 42 0 0 0 12 30" stroke="#fff" opacity=".35" stroke-width="5" fill="none"/>
+ <rect x="162" y="56" width="12" height="30" rx="6" fill="none" stroke="#dfe6ff" stroke-width="3" transform="rotate(24 168 71)"/>`),
+"Rubbed balloon":S(`
+ <path d="M138 114q-12 20 4 38q10 14-4 30" stroke="#e8e2ff" stroke-width="2" fill="none"/>
+ <ellipse cx="138" cy="64" rx="40" ry="48" fill="url(#aP)"/><path d="M131 114l7-8 7 8z" fill="#a8238f"/>
+ <ellipse cx="124" cy="40" rx="11" ry="16" fill="#fff" opacity=".4" stroke="none" transform="rotate(25 124 40)"/>
+ <path d="M118 66h10M132 88h10M150 46h10M154 74h10" stroke="#fff" stroke-width="3.5"/>
+ <path d="M42 130q2-34 30-52M52 124q8-34 40-48M62 120q12-28 46-38M72 122q16-22 48-24M38 140q-6-28 12-52" stroke="#7a4426" stroke-width="5" fill="none"/>
+ <circle cx="64" cy="152" r="32" fill="url(#aSk)"/><circle cx="54" cy="152" r="3" fill="#2a1f5a" stroke="none"/><circle cx="74" cy="152" r="3" fill="#2a1f5a" stroke="none"/>
+ <path d="M56 164q8 7 16 0" stroke="#c0305a" stroke-width="2.5" fill="none"/><circle cx="46" cy="162" r="4" fill="#ff9fb4" stroke="none" opacity=".7"/><circle cx="82" cy="162" r="4" fill="#ff9fb4" stroke="none" opacity=".7"/>
+ <path d="M96 92l6-4M104 104l7 0" stroke="#ffe066" stroke-width="3"/><text x="86" y="78" font-size="16" font-weight="900" fill="#ffe066" stroke="none" ${FONT}>+</text>`),
+"Battery & bulb":S(`
+ <circle cx="100" cy="60" r="56" fill="url(#aYg)" stroke="none"/>
+ <path d="M150 163c36 0 30-46-44-46M50 163c-34 0-26-60 34-60" fill="none" stroke="#ff4d6d" stroke-width="5"/>
+ <path d="M100 16a34 34 0 0 1 22 60q-6 6-6 16H84q0-10-6-16a34 34 0 0 1 22-60z" fill="url(#aBulb)"/>
+ <path d="M90 92V72l5-8 5 8 5-8 5 8v20" stroke="#c27a00" stroke-width="2.5" fill="none"/><ellipse cx="88" cy="38" rx="9" ry="14" fill="#fff" opacity=".6" stroke="none" transform="rotate(30 88 38)"/>
+ <rect x="84" y="92" width="32" height="22" rx="4" fill="url(#aM)"/><path d="M84 99h32M84 106h32" stroke="#8892b0" stroke-width="2"/><rect x="94" y="114" width="12" height="6" rx="2" fill="#4a4f6a"/>
+ <rect x="40" y="146" width="112" height="34" rx="10" fill="url(#aDk)"/><rect x="112" y="146" width="40" height="34" rx="10" fill="url(#aO)"/><rect x="152" y="155" width="8" height="16" rx="3" fill="url(#aM)"/>
+ ${HL(46,150,100,5,2.5,.3)}<text x="132" y="170" text-anchor="middle" font-size="18" font-weight="900" fill="#fff" stroke="none" ${FONT}>+</text><text x="56" y="170" text-anchor="middle" font-size="20" font-weight="900" fill="#fff" stroke="none" ${FONT}>−</text>`),
+"Glass prism":S(`
+ <path d="M0 112l70-14v8L0 120z" fill="#fff" opacity=".95" stroke="none"/>
+ ${["#ff3b3b","#ff9a2f","#ffe14a","#3cf26a","#3aa0ff","#8b5cf6"].map((c,k)=>`<path d="M131 ${96+k*1.4}v1.4L200 ${80+k*15+15}V${80+k*15}z" fill="${c}" stroke="none" opacity=".95"/>`).join("")}
+ <path d="M100 34l58 118H42z" fill="url(#aPr)"/><path d="M70 100h61v6H70z" fill="#fff" opacity=".55" stroke="none"/>
+ <path d="M98 42L50 144" stroke="#fff" stroke-width="4" opacity=".55" fill="none"/>`),
+"Magnifying glass":S(`
+ <rect x="139" y="116" width="24" height="66" rx="11" fill="url(#aW)" transform="rotate(-45 151 149)"/>
+ <rect x="118" y="110" width="20" height="22" rx="4" fill="url(#aGd)" transform="rotate(-45 128 121)"/>
+ <circle cx="84" cy="84" r="58" fill="url(#aGd)"/><circle cx="84" cy="84" r="47" fill="url(#aLens)"/>
+ <text x="84" y="104" text-anchor="middle" font-size="56" font-weight="900" fill="#2a1f5a" stroke="none" ${FONT}>Aa</text>
+ <path d="M50 62a40 40 0 0 1 30-22" stroke="#fff" stroke-width="7" opacity=".75" fill="none"/>
+ <text x="22" y="180" font-size="14" font-weight="800" fill="#dcd6f5" stroke="none" ${FONT}>Aa</text>`),
+"Tuning fork":S(`
+ <path d="M62 52q-10 24 0 48M48 44q-14 32 0 64M138 52q10 24 0 48M152 44q14 32 0 64" stroke="#34e7ff" stroke-width="4" fill="none"/>
+ <path d="M76 28h14v92a10 10 0 0 0 20 0V28h14v92a24 24 0 0 1-48 0z" fill="url(#aM)"/>${HL(79,34,4,80,2,.65)}${HL(113,34,4,80,2,.65)}
+ <rect x="93" y="142" width="14" height="40" rx="5" fill="url(#aM)"/>
+ <text x="150" y="36" font-size="26" fill="#ff4fd8" stroke="none" ${FONT}>♪</text><text x="30" y="34" font-size="24" fill="#ffcc4d" stroke="none" ${FONT}>♫</text>`),
+"Spring":S(`
+ <rect x="40" y="12" width="120" height="14" rx="6" fill="url(#aW)"/><path d="M100 26v14" stroke="#c3cbe0" stroke-width="4"/>
+ ${Array.from({length:8},(_,k)=>{const y=42+k*12;return `<path d="M124 ${y+6}Q100 ${y-2} 76 ${y+12}" stroke="#6b7594" stroke-width="6" fill="none"/>`}).join("")}
+ ${Array.from({length:8},(_,k)=>{const y=42+k*12;return `<path d="M76 ${y}Q100 ${y+14} 124 ${y+6}" stroke="#eef2ff" stroke-width="6" fill="none"/>`}).join("")}
+ <path d="M100 138v10" stroke="#c3cbe0" stroke-width="4"/>
+ <path d="M72 150h56l8 30H64z" fill="url(#aGd)"/>${HL(76,154,48,4,2,.5)}<text x="100" y="174" text-anchor="middle" font-size="16" font-weight="900" fill="#7a4a00" stroke="none" ${FONT}>m</text>
+ ${ARW("M156 46v88M148 56l8-10 8 10M148 124l8 10 8-10","#34e7ff",4)}`),
+"Pendulum":S(`
+ <rect x="50" y="14" width="100" height="14" rx="6" fill="url(#aW)"/>
+ <path d="M100 28L64 144" stroke="#e8e2ff" stroke-width="2" opacity=".3"/><circle cx="64" cy="144" r="20" fill="url(#aR)" opacity=".25" stroke="none"/>
+ <path d="M58 169a147 147 0 0 0 84 0" stroke="#34e7ff" stroke-dasharray="6 6" stroke-width="3" fill="none"/>${ARW("M52 160l6 9 10-3M148 160l-6 9-10-3","#34e7ff",3)}
+ <path d="M100 28l36 116" stroke="#e8e2ff" stroke-width="2.5"/><circle cx="100" cy="28" r="5" fill="url(#aM)"/>
+ <circle cx="136" cy="144" r="21" fill="url(#aR)"/><circle cx="129" cy="137" r="6" fill="#fff" opacity=".55" stroke="none"/>`),
+"Newton's cradle":S(`
+ <rect x="18" y="166" width="164" height="14" rx="6" fill="url(#aDk)"/>
+ <path d="M24 166V34h152v132" stroke="#1b0f3d" stroke-width="10" fill="none"/><path d="M24 166V34h152v132" stroke="#c3cbe0" stroke-width="5" fill="none"/>
+ ${[80,100,120,140].map(x=>`<path d="M${x} 36v82" stroke="#e8e2ff" stroke-width="1.6"/><circle cx="${x}" cy="128" r="10" fill="url(#aM)"/><circle cx="${x-3}" cy="124" r="3" fill="#fff" stroke="none"/>`).join("")}
+ <path d="M60 36L20 107" stroke="#e8e2ff" stroke-width="1.6"/><circle cx="15" cy="116" r="10" fill="url(#aM)"/><circle cx="12" cy="112" r="3" fill="#fff" stroke="none"/>
+ ${ARW("M30 96q10 6 18 14","#ffcc4d",3)}${ARW("M160 112l8 6M160 126h10","#ffcc4d",3)}`),
+"Egg in salty water":S(`
+ <path d="M50 46l12 132h76l12-132z" fill="url(#aGs)"/>
+ <path d="M53 78l10 94h74l10-94z" fill="url(#aWa)" stroke="none"/><ellipse cx="100" cy="78" rx="47" ry="6" fill="#c8f3ff" opacity=".7" stroke="none"/>
+ <ellipse cx="100" cy="90" rx="22" ry="28" fill="url(#aEgg)" transform="rotate(-15 100 90)"/><ellipse cx="92" cy="80" rx="6" ry="9" fill="#fff" opacity=".8" stroke="none" transform="rotate(-15 92 80)"/>
+ ${[[76,166],[88,170],[104,167],[118,170],[128,165],[96,162],[112,162]].map(([x,y])=>`<rect x="${x}" y="${y}" width="5" height="5" fill="#fff" stroke="none" transform="rotate(30 ${x+2} ${y+2})"/>`).join("")}
+ <circle cx="80" cy="140" r="3" fill="#e9fbff" opacity=".7" stroke="none"/><circle cx="118" cy="128" r="2.5" fill="#e9fbff" opacity=".7" stroke="none"/>
+ <path d="M64 60l10 104" stroke="#fff" stroke-width="5" opacity=".45" fill="none"/><ellipse cx="100" cy="46" rx="50" ry="7" fill="none" stroke="#e9f6ff" stroke-width="2.5" opacity=".7"/>
+ <rect x="156" y="118" width="30" height="60" rx="9" fill="url(#aC)"/><rect x="158" y="104" width="26" height="18" rx="6" fill="url(#aM)"/>
+ <circle cx="166" cy="110" r="1.6" fill="#2a1f5a" stroke="none"/><circle cx="176" cy="110" r="1.6" fill="#2a1f5a" stroke="none"/><text x="171" y="156" text-anchor="middle" font-size="16" font-weight="900" fill="#6b7594" stroke="none" ${FONT}>S</text>`),
+"Ice on metal & wood":S(`
+ <path d="M14 124l12-12h76l-12 12z" fill="#eef2ff"/><path d="M90 124l12-12v46l-12 12z" fill="#8892b0"/><rect x="14" y="124" width="76" height="46" fill="url(#aM)"/>
+ <path d="M110 124l12-12h66l-12 12z" fill="#f6cf9f"/><path d="M176 124l12-12v46l-12 12z" fill="#9a5a28"/><rect x="110" y="124" width="66" height="46" fill="url(#aW)"/>
+ <path d="M114 136q30-6 58 0M114 150q30 6 58 0M114 162q24-4 58 2" stroke="#8a4f1e" stroke-width="2" fill="none"/>
+ <ellipse cx="54" cy="119" rx="32" ry="5" fill="#9be7ff" opacity=".85"/>
+ <rect x="42" y="98" width="24" height="20" rx="6" fill="url(#aIce)"/><path d="M50 118v8M60 118v5" stroke="#9be7ff" stroke-width="3"/>
+ <rect x="128" y="76" width="38" height="36" rx="7" fill="url(#aIce)"/>${HL(132,80,12,6,3,.8)}
+ ${ARW("M24 108q-4-8 2-14t0-14M84 108q4-8-2-14t0-14","#ff8a3d",3)}`),
+"Thermometer":S(`
+ <circle cx="156" cy="44" r="16" fill="url(#aYg)" stroke="none"/><circle cx="156" cy="44" r="10" fill="#ffd23d"/>
+ <path d="M156 18v-6M156 76v-6M130 44h-6M188 44h-6M138 26l-4-4M174 26l4-4" stroke="#ffd23d" stroke-width="3"/>
+ <rect x="84" y="14" width="32" height="142" rx="16" fill="url(#aGs)"/>
+ <rect x="94" y="54" width="12" height="104" rx="6" fill="url(#aR)" stroke="none"/><circle cx="100" cy="160" r="24" fill="url(#aR)"/><circle cx="92" cy="152" r="6" fill="#fff" opacity=".5" stroke="none"/>
+ ${Array.from({length:10},(_,k)=>`<path d="M116 ${30+k*12}h${k%2?6:12}" stroke="#e8e2ff" stroke-width="2"/>`).join("")}
+ ${HL(88,22,5,118,2.5,.5)}${ARW("M56 134V62M46 74l10-12 10 12","#ff8a3d")}`)
+};
+/* mystery crate used on the board (colour comes from --tc) */
+const CRATE=`<svg class="crate-art" viewBox="0 0 120 112" aria-hidden="true">
+ <ellipse cx="60" cy="106" rx="44" ry="5" fill="#000" opacity=".35"/>
+ <path d="M14 40h92v58a8 8 0 0 1-8 8H22a8 8 0 0 1-8-8z" fill="url(#aCrB)" stroke="var(--tc)" stroke-width="2.5"/>
+ <path d="M24 50h72v46H24z" fill="none" stroke="var(--tc)" stroke-width="1.5" stroke-dasharray="4 4" opacity=".55"/>
+ <path d="M8 26a6 6 0 0 1 6-6h92a6 6 0 0 1 6 6v14H8z" fill="url(#aCrL)" stroke="var(--tc)" stroke-width="2.5"/>
+ <rect x="50" y="12" width="20" height="9" rx="3" fill="var(--tc)"/>
+ <rect x="14" y="24" width="92" height="4" rx="2" fill="#fff" opacity=".25"/>
+ <text x="60" y="88" text-anchor="middle" font-size="40" font-weight="900" fill="#fff" style="filter:drop-shadow(0 0 6px var(--tc))" font-family="Orbitron,Outfit,Segoe UI,sans-serif">?</text></svg>`;
+/* hero logo for the title screen */
+const HERO=`<svg class="hero-art" viewBox="0 0 220 220" aria-hidden="true">
+ <defs><radialGradient id="hGlow"><stop offset="0" stop-color="#ff4fd8" stop-opacity=".75"/><stop offset=".6" stop-color="#8b5cf6" stop-opacity=".25"/><stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/></radialGradient>
+ <linearGradient id="hFront" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6a3ff0"/><stop offset="1" stop-color="#2a1477"/></linearGradient>
+ <linearGradient id="hSide" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3b1f9e"/><stop offset="1" stop-color="#1c0d55"/></linearGradient>
+ <linearGradient id="hTop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b69bff"/><stop offset="1" stop-color="#7a52f0"/></linearGradient>
+ <linearGradient id="hQ" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#9ff6ff"/><stop offset="1" stop-color="#ff9be8"/></linearGradient></defs>
+ <circle cx="110" cy="112" r="104" fill="url(#hGlow)"/>
+ <ellipse cx="110" cy="196" rx="62" ry="9" fill="#000" opacity=".4"/>
+ <g class="hero-box">
+  <path d="M46 92l64-28 64 28v74l-64 28-64-28z" fill="url(#hFront)"/>
+  <path d="M110 120l64-28v74l-64 28z" fill="url(#hSide)"/>
+  <path d="M46 92l64 28v74l-64-28z" fill="url(#hFront)"/>
+  <path d="M46 92l64 28 64-28" fill="none" stroke="#34e7ff" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M46 92v74l64 28 64-28V92M110 120v74" fill="none" stroke="#34e7ff" stroke-width="3" stroke-linejoin="round" opacity=".9"/>
+  <g class="hero-lid"><path d="M40 84l70-30 70 30-70 30z" fill="url(#hTop)" stroke="#ff4fd8" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M40 84v10l70 30 70-30V84l-70 30z" fill="#5a34d0" stroke="#ff4fd8" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M75 69l70 30" stroke="#ffcc4d" stroke-width="7" opacity=".9"/><path d="M145 69l-70 30" stroke="#ffcc4d" stroke-width="7" opacity=".9"/></g>
+  <text x="78" y="172" text-anchor="middle" font-size="58" font-weight="900" fill="url(#hQ)" transform="skewY(23) translate(0 -36)" style="filter:drop-shadow(0 0 10px #34e7ff)" font-family="Orbitron,Outfit,Segoe UI,sans-serif">?</text>
+ </g>
+ <g class="hero-sp"><path d="M30 44l4 10 10 4-10 4-4 10-4-10-10-4 10-4z" fill="#fff"/><path d="M188 40l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#ffcc4d"/><circle cx="192" cy="150" r="4" fill="#34e7ff"/><circle cx="24" cy="140" r="3" fill="#ff4fd8"/></g></svg>`;
+ITEMS.forEach(it=>{it.s=ART[it.n[0]]||null});
+const artOf=it=>it.s||`<span class="emo">${it.i}</span>`;
+/* small animated diagrams shown with the explanation */
+const DIAG={
+ refl:`<svg class="dgm" viewBox="0 0 220 150" aria-hidden="true">
+  <path d="M20 128h180" stroke="#c3cbe0" stroke-width="7" stroke-linecap="round"/>${[30,50,70,90,110,130,150,170,190].map(x=>`<path d="M${x} 132l-8 10" stroke="#8892b0" stroke-width="2"/>`).join("")}
+  <path class="d-n" d="M110 128V20" stroke="#fff" stroke-dasharray="5 5" stroke-width="2"/>
+  <path class="d-i" d="M40 44l70 84" pathLength="1" stroke="#ff4d6d" stroke-width="4" fill="none"/>
+  <path class="d-r" d="M110 128l70-84" pathLength="1" stroke="#ff4d6d" stroke-width="4" fill="none"/>
+  <path class="d-a" d="M172 46l8-2-1 9" stroke="#ff4d6d" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path class="d-a" d="M110 98a30 30 0 0 0-19.2 6.9M110 98a30 30 0 0 1 19.2 6.9" stroke="#ffcc4d" stroke-width="3" fill="none"/>
+  <text class="d-a" x="84" y="92" font-size="13" font-weight="800" fill="#ffcc4d" ${FONT}>θi</text><text class="d-a" x="122" y="92" font-size="13" font-weight="800" fill="#ffcc4d" ${FONT}>θr</text>
+  <text class="d-a" x="110" y="14" text-anchor="middle" font-size="13" font-weight="800" fill="#fff" ${FONT}>θi = θr</text></svg>`,
+ speed:`<svg class="dgm" viewBox="0 0 220 150" aria-hidden="true">
+  <path d="M20 110h180" stroke="#c3cbe0" stroke-width="4" stroke-linecap="round"/>
+  ${[0,.5,1,1.5,2].map((m,k)=>`<path d="M${20+k*45} 104v12" stroke="#c3cbe0" stroke-width="2"/><text x="${20+k*45}" y="130" text-anchor="middle" font-size="11" font-weight="700" fill="#cfc8f5" ${FONT}>${m} m</text>`).join("")}
+  <g class="d-car">${car(4,86,.3,"aR").replace('<g transform','<g transform')}</g>
+  <circle cx="40" cy="44" r="22" fill="url(#aGd)"/><circle cx="40" cy="44" r="17" fill="#fff"/><path class="d-hand" d="M40 44V30" stroke="#f0405e" stroke-width="3" stroke-linecap="round"/><circle cx="40" cy="44" r="2.5" fill="#2a1f5a"/>
+  <text x="40" y="82" text-anchor="middle" font-size="11" font-weight="800" fill="#ffcc4d" ${FONT}>4 s</text>
+  <text x="140" y="46" text-anchor="middle" font-size="14" font-weight="800" fill="#fff" ${FONT}>v = 2 m ÷ 4 s</text><text x="140" y="66" text-anchor="middle" font-size="14" font-weight="800" fill="#ffcc4d" ${FONT}>= 0.5 m/s</text></svg>`
+};
+const DIAG_OF={"Plane mirror":"refl","Laser & protractor":"refl","Periscope":"refl","Kaleidoscope":"refl","Shiny spoon (concave mirror)":"refl","Car side mirror (convex)":"refl","Bicycle reflector":"refl","Optical fibre":"refl","Stopwatch & toy car":"speed","Distance–time graph":"speed"};
+
 /* ============================== UI TEXT ============================== */
 const U={
  title:["Mystery Physics Box","صندوق الفيزياء الغامض"],
@@ -946,7 +1247,8 @@ function applyLang(){
   document.querySelectorAll("[data-tt]").forEach(el=>{el.title=tp(el.dataset.tt);el.setAttribute("aria-label",tp(el.dataset.tt))});
   document.querySelectorAll("#langSeg button").forEach(b=>b.classList.toggle("sel",b.dataset.l===lang));
   document.title=tp("title");
-  const cr=`<span class="ribbon">✨ ${L(U.ribbon)}</span>`+(lang==="both"?CREDIT.en+CREDIT.ar:CREDIT[lang]);
+  const rb=lang==="both"?`<span>${U.ribbon[0]}</span><span class="rsep">•</span><span lang="ar" dir="rtl">${U.ribbon[1]}</span>`:`<span>${lang==="ar"?U.ribbon[1]:U.ribbon[0]}</span>`;
+  const cr=`<span class="ribbon"><span>✨</span>${rb}</span>`+(lang==="both"?CREDIT.en+CREDIT.ar:CREDIT[lang]);
   $("credit1").innerHTML=cr; $("credit2").innerHTML=cr;
   $("rules").innerHTML=U.rules.map((r,i)=>`<div class="rc" style="animation-delay:${i*70}ms"><div class="ri">${r[0]}</div>${L([r[1],r[2]])}</div>`).join("");
   renderSetup(); renderSnd();
@@ -1010,7 +1312,7 @@ function renderBoard(intro){
   bd.innerHTML=G.boxes.map((b,i)=>{const c=CAT[b.it.c];
     return `<button class="mbox ${b.done?"done":""}" style="--d:${i};--tc:${c.col};--tcg:${c.col}99;--tcs:${c.col}33" onclick="openBox(${i})" ${b.done?'tabindex="-1" aria-disabled="true"':""}>
       <div class="mface"><span class="mnum">${String(i+1).padStart(2,"0")}</span>
-      ${b.done?`<span class="mico">${b.it.i}</span><span class="mname">${L(b.it.n)}</span>`:`<span class="mq">?</span>${chip(b.it.c)}`}
+      ${b.done?`<span class="mico">${artOf(b.it)}</span><span class="mname">${L(b.it.n)}</span>`:`<span class="mq">${CRATE}</span>${chip(b.it.c)}`}
       ${b.by>=0?`<span class="who" style="--c:${G.players[b.by].color}"></span>`:""}</div></button>`}).join("");
   if(intro){bd.classList.add("intro");setTimeout(()=>bd.classList.remove("intro"),2200)}
   renderLB();
@@ -1022,11 +1324,12 @@ function renderLB(){
     el.dataset.lang=lang;
   }
   const order=P.map((_,i)=>i).sort((a,b)=>P[b].score-P[a].score||a-b), max=Math.max(1,...P.map(p=>p.score));
+  let prevR=0;
   order.forEach((pi,rank)=>{
     const row=el.children[pi], p=P[pi];
     row.style.transform=`translateY(${rank*rowH}px)`; row.style.height=(rowH-6)+"px";
     row.classList.toggle("turn",pi===G.turn);
-    const r=rank>0&&p.score===P[order[rank-1]].score?row.dataset.r:rank+1; row.dataset.r=r;
+    const r=rank>0&&p.score===P[order[rank-1]].score?prevR:rank+1; prevR=r;
     row.querySelector(".rk").textContent=r==1?"🥇":r==2?"🥈":r==3?"🥉":r;
     row.querySelector(".nm").innerHTML=pName(p,true)+(p.streak>=2?`<span class="fire">🔥×${p.streak}</span>`:"");
     row.querySelector(".bar i").style.width=(p.score/max*100)+"%";
@@ -1066,7 +1369,7 @@ function renderPlay(first){
   const w=$("pWho"); w.style.setProperty("--c",p.color); w.style.setProperty("--cg",p.color+"55");
   w.innerHTML=`<div class="tav sm">${p.av}</div><div class="tinfo"><div class="tname sm">${pName(p)}</div>${membersHTML(p)}</div>`;
   const sp=$("spec"); sp.style.setProperty("--tc",c.col); sp.style.setProperty("--tcg",c.col+"66");
-  if(first){sp.className="specimen";$("crItem").textContent=it.i;$("sparks").innerHTML=""}
+  if(first){sp.className="specimen";$("crItem").innerHTML=artOf(it);$("sparks").innerHTML=""}
   $("objName").innerHTML=done?L(it.n):"";
   $("hname").innerHTML=`<span class="live"></span>NOVA<span class="hsub">${Li(U.aiSub)}</span>`;
   if(!first) typeAI(false);
@@ -1191,7 +1494,7 @@ function renderResult(){
       ${o==="stole"?`<div class="res-ans">${P[cur.scorer].av} ${pName(P[cur.scorer])}</div>`:""}
       ${good?"":`<div class="res-ans">${txi("theAns")} <b>${Li(it.o[0])}</b></div>`}</div></div>
     <div class="bonus"><div class="bonus-h"><span class="bh"><i>💡</i><span>${tx("bonusT")}</span></span><span class="for" style="--c:${tg.color}">${tg.av} ${pName(tg)}</span></div>
-      <div class="why ${cur.whyShown?"on":""}">${L(it.w)}</div>
+      <div class="why ${cur.whyShown?"on":""}"><div class="whyrow"><div class="whytxt">${L(it.w)}</div>${DIAG_OF[it.n[0]]?DIAG[DIAG_OF[it.n[0]]]:""}</div></div>
       <div class="btns">${cur.bonusDone
         ?`<div class="verdict ${cur.bonusYes?"y":"n"}">${cur.bonusYes?"🌟 "+txi("gotBonus"):txi("noBonus")}</div>`
         :`${cur.whyShown?"":`<button class="btn" onclick="showWhy()"><i>👁️</i><span>${tx("showWhy")}</span><kbd>A</kbd></button>`}
@@ -1387,9 +1690,10 @@ function drawBg(){
 function bgLoop(){if(!document.hidden) drawBg(); requestAnimationFrame(bgLoop)}
 addEventListener("resize",sizeCanvases); sizeCanvases(); if(!RM) requestAnimationFrame(bgLoop);
 /* floating specimen icons on the title screen */
-(function(){const f=$("floaters"),ic=shuffle(ITEMS.map(x=>x.i)).slice(0,16);
-  f.innerHTML=ic.map((e,i)=>`<span style="left:${(i*6.3+Math.random()*4)%98}%;font-size:${26+Math.random()*30|0}px;animation-duration:${16+Math.random()*16}s;animation-delay:${-Math.random()*30}s">${e}</span>`).join("")})();
+(function(){const f=$("floaters"),ic=shuffle(ITEMS.map(artOf)).slice(0,14);
+  f.innerHTML=ic.map((e,i)=>`<span style="left:${(i*7.1+Math.random()*4)%96}%;width:${44+Math.random()*34|0}px;animation-duration:${16+Math.random()*16}s;animation-delay:${-Math.random()*30}s">${e}</span>`).join("")})();
 
+$("hero").innerHTML=HERO;
 applyLang();
 </script>
 </body>
